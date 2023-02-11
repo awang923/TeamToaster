@@ -9,7 +9,7 @@ class SelectOperationPage(tk.Frame):
         selection_prompt = Label(self, text = "Please select an operation")
         selection_prompt.place(relx=.5, rely=.1, anchor= CENTER)
 
-        load_button = Button(self, text="Load/Unload", command=lambda: controller.show_frame(InputLoadPage), width=20)
+        load_button = Button(self, text="Load/Unload", command=lambda: controller.show_frame(InputLoadPage), height=3, width=20)
         load_button.place(relx=.25, rely=.2, anchor= CENTER)        
-        balance_button = Button(self, text="Balance", command=lambda: controller.show_frame(ComputingPage), width=20)
+        balance_button = Button(self, text="Balance", command=lambda: controller.show_frame(ComputingPage), height=3, width=20)
         balance_button.place(relx=.75, rely=.2, anchor= CENTER)   
