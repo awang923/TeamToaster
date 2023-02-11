@@ -14,7 +14,7 @@ class Application(tk.Tk):
 		container = tk.Frame(self)
 		container.pack(side = "top", fill = "both", expand = True)
 
-		container.grid_rowconfigure(0, minsize=400)
+		container.grid_rowconfigure(0, minsize=800)
 		container.grid_columnconfigure(0, minsize=500)
 
 		self.frames = {}

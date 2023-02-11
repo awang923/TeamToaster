@@ -33,7 +33,7 @@ class InputLoadPage(tk.Frame):
                 entry.configure(state='disabled')
 
         def onKeyPress(event):
-            self.y += 0.1
+            self.y += 0.05
             container_name_entry = Entry(self)
             container_name_entry.place(relx=.25, rely=self.y, anchor= CENTER)
             container_name_entry.insert(0, 'Enter Container Name')
