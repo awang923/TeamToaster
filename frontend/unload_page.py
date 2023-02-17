@@ -88,8 +88,8 @@ class InputUnloadPage(tk.Frame):
 
         tooltipString = ""
 
-        def on_click(tooltipString):
-            print(tooltipString)
+        def on_click(container_name, mass, x_coord, y_coord):
+            print("["+ x_coord+ ", " +  y_coord + "] " + container_name + ", "+ mass)
 
         for x in range(12):
             for y in range(8):
@@ -104,9 +104,12 @@ class InputUnloadPage(tk.Frame):
                             b = Button(table_frame, text=regex_matches.group(4), height=3, width=6, highlightbackground='white')
                             tooltipString = b.cget('text')
                         else:
-                            tooltipString = regex_matches.group(4)
-                            b = Button(table_frame, text=regex_matches.group(4)[:3], height=3, width=6, highlightbackground='#8FFF3A', command= lambda: on_click(tooltipString))
-                            # tooltipString = b.cget('text') + ", " + regex_matches.group(3) + "kg"
+                            container_name = regex_matches.group(4)
+                            mass=regex_matches.group(3)
+                            x_coord = regex_matches.group(1)
+                            y_coord = regex_matches.group(2)
+                            b = Button(table_frame, text=regex_matches.group(4)[:6], height=3, width=6, highlightbackground='#8FFF3A', command= lambda container_name=container_name, mass=mass, x_coord=x_coord, y_coord=y_coord: on_click(container_name,mass,x_coord,y_coord))
+                            tooltipString = container_name + ", " + mass + "kg"
                             
                         #b = Button(table_frame, text=regex_matches.group(4), height=3, width=5)
                         #print(regex_matches.group(4))
