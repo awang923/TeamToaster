@@ -94,7 +94,7 @@ class InputUnloadPage(tk.Frame):
         for x in range(8,0,-1):
             temp += 1
             for y in range(12):
-                for line in manifest_lines[::-1]:
+                for line in manifest_lines:
                     regex_matches = re.search(regex, str(line))
                     #print(tooltipString)
                     if (regex_matches.group(1).lstrip('0') == str(temp) and regex_matches.group(2).lstrip('0') == str(y+1)):
