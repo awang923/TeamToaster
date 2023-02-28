@@ -60,7 +60,7 @@ class InputUnloadPage(tk.Frame):
         table_frame = Frame(self)
         table_frame.place(relx=.5, rely=.5, anchor=CENTER)
 
-        manifest = open('files/manifest.txt', 'r')
+        manifest = open('TeamToaster/files/manifest.txt', 'r')
         manifest_lines = manifest.readlines()
 
         regex = ".(\d\d),(\d\d).,\s{(\d*)}.\s([a-zA-Z]*)"
@@ -90,13 +90,14 @@ class InputUnloadPage(tk.Frame):
 
         def on_click(container_name, mass, x_coord, y_coord):
             print("["+ x_coord+ ", " +  y_coord + "] " + container_name + ", "+ mass)
-
-        for x in range(12):
-            for y in range(8):
-                for line in manifest_lines:
-                    regex_matches = re.search(regex, line)
+        temp = 0
+        for x in range(8,0,-1):
+            temp += 1
+            for y in range(12):
+                for line in manifest_lines[::-1]:
+                    regex_matches = re.search(regex, str(line))
                     #print(tooltipString)
-                    if (regex_matches.group(1).lstrip('0') == str(y+1) and regex_matches.group(2).lstrip('0') == str(12-x)):
+                    if (regex_matches.group(1).lstrip('0') == str(temp) and regex_matches.group(2).lstrip('0') == str(y+1)):
                         if regex_matches.group(4) == "NAN":
                             b = Button(table_frame, text=regex_matches.group(4), height=3, width=6, highlightbackground='#CEBBBB')
                             tooltipString = b.cget('text')
@@ -108,7 +109,9 @@ class InputUnloadPage(tk.Frame):
                             mass=regex_matches.group(3)
                             x_coord = regex_matches.group(1)
                             y_coord = regex_matches.group(2)
-                            b = Button(table_frame, text=regex_matches.group(4)[:6], height=3, width=6, highlightbackground='#8FFF3A', command= lambda container_name=container_name, mass=mass, x_coord=x_coord, y_coord=y_coord: on_click(container_name,mass,x_coord,y_coord))
+                            b = Button(table_frame, text=regex_matches.group(4)[:6], height=3, width=6, highlightbackground='#8FFF3A', 
+                                    command= lambda container_name=container_name, mass=mass, x_coord=x_coord, y_coord=y_coord: 
+                                    on_click(container_name,mass,x_coord,y_coord))
                             tooltipString = container_name + ", " + mass + "kg"
                             
                         #b = Button(table_frame, text=regex_matches.group(4), height=3, width=5)

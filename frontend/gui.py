@@ -15,7 +15,7 @@ class Application(tk.Tk):
 		container.pack(side = "top", fill = "both", expand = True)
 
 		container.grid_rowconfigure(0, minsize=800)
-		container.grid_columnconfigure(0, minsize=500)
+		container.grid_columnconfigure(0, minsize=1000)
 
 		self.frames = {}
 		for F in (LoginPage, UploadManifestPage, SelectOperationPage, InputLoadPage, InputUnloadPage, ComputingPage):
