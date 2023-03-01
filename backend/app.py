@@ -2,13 +2,13 @@ import copy
 import time
 
 # dimensions of ship bay
-ROWS = 8
-COLS = 12
+ROWS = 3
+COLS = 4
 
 # coordinates of unload zone on ship
 unload_zone = (ROWS + 1, 1)
 
-manifest_file = '../files/big_manifest.txt' # needs to be given at runtime
+manifest_file = '../files/small_manifest.txt' # needs to be given at runtime
 
 # contents of ship
 # key = (x, y)
@@ -37,9 +37,11 @@ def parse_manifest(ship_grid, filename):
 
 # containers to be unloaded -- (mass, description)
 unload_list = [
-    (555, 'Dad'),
-    (3450, 'Beer')
+    (5, 'Beer'),
+    (3, 'Mat')
 ]
+
+NUM_UNLOADS = len(unload_list)
 
 # containers to be loaded -- (mass, description)
 load_list = [
@@ -132,7 +134,9 @@ class Node:
         # f = (ROWS * COLS) // 2 if f > (ROWS * COLS) // 2 else f
         # self.h = (f * total_cost) / ROWS
 
-        self.h = total_cost
+        self.h = total_cost * (len(self.unloads) / NUM_UNLOADS)
+
+        # self.h = total_cost
 
     # when balancing, goal is to maximize mass ratio / g score
     def balance_heuristic(self):
@@ -366,7 +370,7 @@ def search(root):
     while open_nodes:
         if root.sequence_type == 'transfer':
             # sort in ascending order based on f score
-            open_nodes.sort(key=lambda x: x.g + x.h)
+            open_nodes.sort(key=lambda x: x.h)
         else:
             # sort in descending order based on mass ratio / g score
             open_nodes.sort(key=lambda x: x.h, reverse=True)
