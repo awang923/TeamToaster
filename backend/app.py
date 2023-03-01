@@ -15,22 +15,25 @@ manifest_file = '../files/balance_manifest.txt' # needs to be given at runtime
 # value = [mass, description]
 ship = {}
 
-with open(manifest_file) as manifest:
-    for line in manifest.readlines():
-        entries = line.split(' ')
+# ** RUN THIS BEFORE ALL OPERATIONS **
+# takes in a manifest text file and populates a ship grid according to its contents
+def parse_manifest(ship_grid, filename):
+    with open(filename) as manifest:
+        for line in manifest.readlines():
+            entries = line.split(' ')
 
-        # parse positional data
-        pos = [int(i) for i in entries[0][:-1].strip('][').split(',')]
-        pos = (pos[0], pos[1])
+            # parse positional data
+            pos = [int(i) for i in entries[0][:-1].strip('][').split(',')]
+            pos = (pos[0], pos[1])
 
-        # parse weight data
-        wt = int(entries[1][:-1].strip('}{'))
+            # parse weight data
+            wt = int(entries[1][:-1].strip('}{'))
 
-        # parse name data
-        name = entries[2].strip()
+            # parse name data
+            name = entries[2].strip()
 
-        # add to ship
-        ship[pos] = [wt, name]
+            # add to ship
+            ship[pos] = [wt, name]
 
 # containers to be unloaded -- (mass, description)
 unload_list = [
@@ -85,7 +88,7 @@ def mass_ratio(state):
 
 # Node class -- configuration of ship grid at current time
 class Node:
-    def __init__(self, state, buffer_state, unloads, sequence_type='transfer', parent=None, cost=0):
+    def __init__(self, state, buffer_state, unloads, sequence_type, parent=None, cost=0, move_str=None):
         self.state = state # container configuration in ship
         self.buffer_state = buffer_state # container configuration in buffer
         self.unloads = unloads # list of containers to be unloaded
@@ -93,6 +96,7 @@ class Node:
         self.parent = parent # pointer to parent node
         self.g = cost # cost from parent to current node
         self.h = 0 # cost to reach goal from current node
+        self.move_str = move_str # string containing the move to get to node
 
         if self.sequence_type == 'transfer':
             self.transfer_heuristic() # updates node with cost to goal state for a transfer sequence
@@ -167,8 +171,15 @@ class Node:
                         # calculate cost of move
                         cont_cost = abs(unload_zone[0] - (row + 1)) + abs(unload_zone[1] - (col + 1)) + 2
 
+                        # create output string
+                        x = str(row + 1) if len(str(row + 1)) > 1 else '0' + str(row + 1)
+                        y = str(col + 1) if len(str(col + 1)) > 1 else '0' + str(col + 1)
+                        coord = '[' + x + ',' + y + ']'
+
+                        output_str = 'Unload ' + coord + ' ' + self.state[(row + 1, col + 1)][1]
+
                         # create new child node and add to list of children
-                        new_child = Node(new_ship, new_buff, new_unloads, self.sequence_type, self, self.g + cont_cost)
+                        new_child = Node(new_ship, new_buff, new_unloads, self.sequence_type, self, self.g + cont_cost, output_str)
                         child_nodes.append(new_child)
 
                         break
@@ -198,8 +209,18 @@ class Node:
                                 # calculate cost of move
                                 cont_cost = abs(row - r) + abs(col - c)
 
+                                # create output string
+                                x1 = str(row + 1) if len(str(row + 1)) > 1 else '0' + str(row + 1)
+                                y1 = str(col + 1) if len(str(col + 1)) > 1 else '0' + str(col + 1)
+                                coord1 = '[' + x1 + ',' + y1 + ']'
+                                x2 = str(r + 1) if len(str(r + 1)) > 1 else '0' + str(r + 1)
+                                y2 = str(c + 1) if len(str(c + 1)) > 1 else '0' + str(c + 1)
+                                coord2 = '[' + x2 + ',' + y2 + ']'
+
+                                output_str = 'Move ' + coord1 + ' ' + self.state[(row + 1, col + 1)][1] + ' to ' + coord2
+
                                 # create new node and add to list of child nodes
-                                new_child = Node(new_ship, new_buff, list(self.unloads), self.sequence_type, self, self.g + cont_cost)
+                                new_child = Node(new_ship, new_buff, list(self.unloads), self.sequence_type, self, self.g + cont_cost, output_str)
                                 child_nodes.append(new_child)
 
                                 break
@@ -250,8 +271,18 @@ class Node:
                             # calculate cost of move
                             cont_cost = abs(unload_zone[0] - (row + 1)) + abs(unload_zone[1] - (col + 1)) + 4 + abs(buff_unload[0] - (r + 1)) + abs(buff_unload[1] - (c + 1))
 
+                            # create output string
+                            x1 = str(row + 1) if len(str(row + 1)) > 1 else '0' + str(row + 1)
+                            y1 = str(col + 1) if len(str(col + 1)) > 1 else '0' + str(col + 1)
+                            coord1 = '[' + x1 + ',' + y1 + ']'
+                            x2 = str(r + 1) if len(str(r + 1)) > 1 else '0' + str(r + 1)
+                            y2 = str(c + 1) if len(str(c + 1)) > 1 else '0' + str(c + 1)
+                            coord2 = '[' + x2 + ',' + y2 + ']'
+
+                            output_str = 'Move ' + coord1 + ' ' + self.state[(row + 1, col + 1)][1] + ' to BUFFER ' + coord2
+
                             # create new node and add to list of child nodes
-                            new_child = Node(new_ship, new_buff, list(self.unloads), self.sequence_type, self, self.g + cont_cost)
+                            new_child = Node(new_ship, new_buff, list(self.unloads), self.sequence_type, self, self.g + cont_cost, output_str)
                             child_nodes.append(new_child)
 
                             break
@@ -299,8 +330,18 @@ class Node:
                                 # calculate cost of move
                                 cont_cost = abs(buff_unload[0] - (row + 1)) + abs(buff_unload[1] - (col + 1)) + 4 + abs(unload_zone[0] - (r + 1)) + abs(unload_zone[1] - (c + 1))
 
+                                # create output string
+                                x1 = str(row + 1) if len(str(row + 1)) > 1 else '0' + str(row + 1)
+                                y1 = str(col + 1) if len(str(col + 1)) > 1 else '0' + str(col + 1)
+                                coord1 = '[' + x1 + ',' + y1 + ']'
+                                x2 = str(r + 1) if len(str(r + 1)) > 1 else '0' + str(r + 1)
+                                y2 = str(c + 1) if len(str(c + 1)) > 1 else '0' + str(c + 1)
+                                coord2 = '[' + x2 + ',' + y2 + ']'
+
+                                output_str = 'Move BUFFER ' + coord1 + ' ' + self.buffer_state[(row + 1, col + 1)][1] + ' to ' + coord2
+
                                 # create new node and add to list of children
-                                new_child = Node(new_ship, new_buff, list(self.unloads), self.sequence_type, self, self.g + cont_cost)
+                                new_child = Node(new_ship, new_buff, list(self.unloads), self.sequence_type, self, self.g + cont_cost, output_str)
                                 child_nodes.append(new_child)
 
                                 break
@@ -366,6 +407,7 @@ def a_star(root):
         
         closed_nodes.append(curr_node) # close current node
 
+# ** RUN AFTER UNLOADING SHIP **
 # moves containers from buffer and back onto ship
 # returns cost of moves
 def unload_buffer(ship_grid, buffer_grid):
@@ -411,6 +453,7 @@ def unload_buffer(ship_grid, buffer_grid):
 
     return buffer_cost
 
+# ** RUN AFTER UNLOADING SHIP **
 # moves containers from trucks onto ship
 # returns cost of moves
 def load_ship(ship_grid, loads):
@@ -440,26 +483,68 @@ def load_ship(ship_grid, loads):
 
     return load_cost
 
+# ** RUN AFTER COMPLETING ALL OPERATIONS **
+# creates the outbound manifest containing configuration of containers on ship
+def update_manifest(ship_grid, filename):
+    # isolate filename and append 'OUTBOUND' to it
+    name = [i for i in filename.split('/') if '.txt' in i][0][:-4]
+
+    line_counter = 0
+
+    with open(name + 'OUTBOUND.txt', 'w') as outbound:
+        for key, value in ship_grid.items():
+            # format positional data
+            x = str(key[0]) if len(str(key[0])) > 1 else '0' + str(key[0])
+            y = str(key[1]) if len(str(key[1])) > 1 else '0' + str(key[1])
+            coord = '[' + x + ',' + y + ']'
+
+            # format weight data
+            weight = str(value[0])
+            while len(weight) < 5:
+                weight = '0' + weight
+            weight = '{' + weight + '}'
+
+            # name data
+            name = value[1]
+
+            line_counter += 1
+
+            # no newline at end of file
+            if line_counter == ROWS * COLS:
+                outbound.write(coord + ', ' + weight + ', ' + name)
+            else:
+                outbound.write(coord + ', ' + weight + ', ' + name + '\n')
+    
+# ** RUN AFTER COMPLETING ALL OPERATIONS **
+# creates a list of the sequence of moves taken to reach the goal state
+def order_of_operations(node):
+    ops = []
+    ops.append(node.move_str)
+    while node.parent:
+        node = node.parent
+        if node.move_str:
+            ops.append(node.move_str)
+
+    return ops[::-1]
 
 # MAIN 
 
-root = Node(ship, buffer, unload_list, 'transfer')
+# populate ship grid
+parse_manifest(ship, manifest_file)
 
+root = Node(ship, buffer, unload_list, 'transfer')
 
 goal_node = a_star(root)
 
-i = 1
-curr = goal_node
-print('goal:', curr.state)
-# # while curr.parent:
-# #     curr = curr.parent
-# #     print(i, curr.state, curr.g)
-# #     i += 1
+for i in order_of_operations(goal_node):
+    print(i)
 
-goal_node.buffer_state[(1, 24)] = [69, 'Ham']
+# goal_node.buffer_state[(1, 24)] = [69, 'Ham']
 
-unload_buffer(goal_node.state, goal_node.buffer_state)
-print('--', goal_node.state)
+# unload_buffer(goal_node.state, goal_node.buffer_state)
+# print('--', goal_node.state)
 
-load_ship(goal_node.state, load_list)
-print('--', goal_node.state)
+# load_ship(goal_node.state, load_list)
+# print('--', goal_node.state)
+
+# update_manifest(goal_node.state, manifest_file)
