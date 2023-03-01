@@ -2,13 +2,13 @@ import copy
 import time
 
 # dimensions of ship bay
-ROWS = 4
-COLS = 4
+ROWS = 8
+COLS = 12
 
 # coordinates of unload zone on ship
 unload_zone = (ROWS + 1, 1)
 
-manifest_file = '../files/balance_manifest.txt' # needs to be given at runtime
+manifest_file = '../files/big_manifest.txt' # needs to be given at runtime
 
 # contents of ship
 # key = (x, y)
@@ -37,8 +37,8 @@ def parse_manifest(ship_grid, filename):
 
 # containers to be unloaded -- (mass, description)
 unload_list = [
-    (4, 'Cat'),
-    (9, 'Mat')
+    (555, 'Dad'),
+    (3450, 'Beer')
 ]
 
 # containers to be loaded -- (mass, description)
@@ -132,14 +132,11 @@ class Node:
         # f = (ROWS * COLS) // 2 if f > (ROWS * COLS) // 2 else f
         # self.h = (f * total_cost) / ROWS
 
-        # comment this line out if testing other heuristics
         self.h = total_cost
 
-    # calculates the total time it would take to reach goal state from current state
-    # in this case, goal state = mass of lighter side / mass of heavier side > 0.9
-    # and buffer is empty
+    # when balancing, goal is to maximize mass ratio / g score
     def balance_heuristic(self):
-        self.h = 0
+        self.h = mass_ratio(self.state) / self.g if self.g > 0 else 0
 
     def children(self):
         child_nodes = []
@@ -356,9 +353,9 @@ class Node:
         
         return child_nodes
 
-# a star search algorithm
+# search algorithm
 # root = starting node
-def a_star(root):
+def search(root):
     initial_time = time.time();
 
     open_nodes = [] # nodes to be visted
@@ -367,7 +364,12 @@ def a_star(root):
     open_nodes.append(root)
 
     while open_nodes:
-        open_nodes.sort(key=lambda x: x.g + x.h) # sort in ascending order based on f score
+        if root.sequence_type == 'transfer':
+            # sort in ascending order based on f score
+            open_nodes.sort(key=lambda x: x.g + x.h)
+        else:
+            # sort in descending order based on mass ratio / g score
+            open_nodes.sort(key=lambda x: x.h, reverse=True)
         
         curr_node = open_nodes.pop(0) # look at node with lowest f score
 
@@ -383,6 +385,11 @@ def a_star(root):
             # check for an empty buffer
             if not cont_in_buffer and mass_ratio(curr_node.state) > 0.9:
                 print('time:', (time.time() - initial_time) * 1000)
+
+                # if balancing is not possible, a SIFT operation is done to the containers
+                # if not curr_node:
+                #    SIFT(root)
+
                 return curr_node
 
         for child in curr_node.children():
@@ -531,20 +538,6 @@ def order_of_operations(node):
 parse_manifest(ship, manifest_file)
 
 root = Node(ship, buffer, unload_list, 'transfer')
-
-goal_node = a_star(root)
-
-update_manifest(goal_node.state, manifest_file)
-
-for i in order_of_operations(goal_node):
+goal = search(root)
+for i in order_of_operations(goal):
     print(i)
-
-# goal_node.buffer_state[(1, 24)] = [69, 'Ham']
-
-# unload_buffer(goal_node.state, goal_node.buffer_state)
-# print('--', goal_node.state)
-
-# load_ship(goal_node.state, load_list)
-# print('--', goal_node.state)
-
-# update_manifest(goal_node.state, manifest_file)
