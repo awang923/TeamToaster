@@ -489,7 +489,7 @@ def update_manifest(ship_grid, filename):
     # isolate filename and append 'OUTBOUND' to it
     name = [i for i in filename.split('/') if '.txt' in i][0][:-4]
 
-    line_counter = 0
+    line_counter = 1
 
     with open(name + 'OUTBOUND.txt', 'w') as outbound:
         for key, value in ship_grid.items():
@@ -507,23 +507,21 @@ def update_manifest(ship_grid, filename):
             # name data
             name = value[1]
 
-            line_counter += 1
-
             # no newline at end of file
             if line_counter == ROWS * COLS:
                 outbound.write(coord + ', ' + weight + ', ' + name)
             else:
                 outbound.write(coord + ', ' + weight + ', ' + name + '\n')
+
+            line_counter += 1
     
 # ** RUN AFTER COMPLETING ALL OPERATIONS **
 # creates a list of the sequence of moves taken to reach the goal state
 def order_of_operations(node):
     ops = []
-    ops.append(node.move_str)
     while node.parent:
+        ops.append(node.move_str)
         node = node.parent
-        if node.move_str:
-            ops.append(node.move_str)
 
     return ops[::-1]
 
@@ -535,6 +533,8 @@ parse_manifest(ship, manifest_file)
 root = Node(ship, buffer, unload_list, 'transfer')
 
 goal_node = a_star(root)
+
+update_manifest(goal_node.state, manifest_file)
 
 for i in order_of_operations(goal_node):
     print(i)
