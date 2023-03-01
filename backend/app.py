@@ -34,8 +34,8 @@ with open(manifest_file) as manifest:
 
 # containers to be unloaded -- (mass, description)
 unload_list = [
-    (3450, 'Beer'),
-    (2007, 'Balls')
+    (4, 'Cat'),
+    (9, 'Mat')
 ]
 
 # containers to be loaded -- (mass, description)
@@ -76,15 +76,12 @@ def count_containers_above(state, cont_coords):
     return count
 
 # returns the ratio of the masses of the halves of a ship configuration
-# heavier side / lighter side
+# lighter side / heavier side
 def mass_ratio(state):
-    left = sum([ship[(i + 1, j + 1)][0] for i in range(ROWS) for j in range(COLS // 2)])
-    right = sum([ship[(i + 1, j + 1)][0] for i in range(ROWS) for j in range(2, COLS)])
+    left = sum([state[(i + 1, j + 1)][0] for i in range(ROWS) for j in range(COLS // 2)])
+    right = sum([state[(i + 1, j + 1)][0] for i in range(ROWS) for j in range(2, COLS)])
 
-    masses = sorted([left, right])
-    lighter, heavier = masses[0], masses[1]
-
-    return heavier / lighter
+    return min((left, right)) / max((left, right))
 
 # Node class -- configuration of ship grid at current time
 class Node:
@@ -135,299 +132,191 @@ class Node:
         self.h = total_cost
 
     # calculates the total time it would take to reach goal state from current state
-    # in this case, goal state = mass of heavier side / mass of lighter side < 1.1
+    # in this case, goal state = mass of lighter side / mass of heavier side > 0.9
     # and buffer is empty
     def balance_heuristic(self):
         self.h = 0
 
-    # finds all possible child nodes (moves) from current state
     def children(self):
-        child_nodes = [] # holds all child nodes
-        for col in range(COLS):
-            for row in range(ROWS):
-                key = (row + 1, col + 1)
-                value = self.state[key]
+        child_nodes = []
 
-                # no more valid containers in column
-                if value[1] == 'UNUSED':
+        # SHIP -> SHIP
+        # look for container in ship
+        for col in range(COLS):
+            container_found = False
+            for row in range(ROWS - 1, -1, -1):
+                if self.state[(row + 1, col + 1)][1] == 'UNUSED':
+                    continue # go to next row
+                elif self.state[(row + 1, col + 1)][1] == 'NAN':
+                    break # if NAN found, done with that column
+                else:
+                    # found an eligible container
+                    container_found = True
+
+                    # during a transfer sequence, containers that need to be unloaded will be removed from ship
+                    if self.sequence_type == 'transfer' and (self.state[(row + 1, col + 1)][0], self.state[(row + 1, col + 1)][1]) in self.unloads:
+                        # move container out of ship and update unload list
+                        new_ship = copy.deepcopy(self.state)
+                        new_buff = copy.deepcopy(self.buffer_state)
+
+                        new_unloads = list(self.unloads)
+                        new_unloads.remove((new_ship[(row + 1, col + 1)][0], new_ship[(row + 1, col + 1)][1]))
+
+                        new_ship[(row + 1, col + 1)] = [0, 'UNUSED']
+
+                        # calculate cost of move
+                        cont_cost = abs(unload_zone[0] - (row + 1)) + abs(unload_zone[1] - (col + 1)) + 2
+
+                        # create new child node and add to list of children
+                        new_child = Node(new_ship, new_buff, new_unloads, self.sequence_type, self, self.g + cont_cost)
+                        child_nodes.append(new_child)
+
+                        break
+
+                    # look for available space on ship to move container
+                    for c in range(COLS):
+                        spot_found = False
+                        for r in range(ROWS - 1, -1, -1):
+                            if c == col:
+                                break # no moves to same column
+                            if self.state[(r + 1, c + 1)][1] != 'UNUSED' or self.state[(r + 1, c + 1)][1] == 'NAN':
+                                break # something in space, done with column
+
+                            # found place in ship to put container
+                            spot_found = True
+
+                            # check if something is below available space or it's on the bottom row
+                            if (r and self.state[(r, c + 1)][1] != 'UNUSED') or not r:
+                                # move container to different space
+                                new_ship = copy.deepcopy(self.state)
+                                new_buff = copy.deepcopy(self.buffer_state)
+                                new_ship[(r + 1, c + 1)] = list(new_ship[(row + 1, col + 1)])
+
+                                # mark old space as empty
+                                new_ship[(row + 1, col + 1)] = [0, 'UNUSED']
+
+                                # calculate cost of move
+                                cont_cost = abs(row - r) + abs(col - c)
+
+                                # create new node and add to list of child nodes
+                                new_child = Node(new_ship, new_buff, list(self.unloads), self.sequence_type, self, self.g + cont_cost)
+                                child_nodes.append(new_child)
+
+                                break
+
+                # found the topmost container in ship column
+                if container_found:
                     break
 
-                # space holds container
-                if value[1] != 'NAN':
-                    # top row
-                    if key[0] == ROWS:
-                        # load/unload operation
-                        if self.sequence_type == 'transfer':
-                            # container to be unloaded
-                            if (value[0], value[1]) in self.unloads:
-                                # remove container from ship
-                                new_ship = copy.deepcopy(self.state) 
-                                new_ship[key][0] = 0
-                                new_ship[key][1] = 'UNUSED'
+        # SHIP -> BUFFER
+        # look for container in ship
+        for col in range(COLS):
+            container_found = False
+            for row in range(ROWS - 1, -1, -1):
+                if self.state[(row + 1, col + 1)][1] == 'UNUSED':
+                    continue # go to next row
+                elif self.state[(row + 1, col + 1)][1] == 'NAN':
+                    break # if NAN found, done with that column
+                else:
+                    # found an eligible container
+                    container_found = True
 
-                                # update unload list
-                                new_unloads = list(self.unloads)
-                                new_unloads.remove((value[0], value[1]))
+                    # during a transfer sequence, containers that need to be unloaded will be removed from ship
+                    if self.sequence_type == 'transfer' and (self.state[(row + 1, col + 1)][0], self.state[(row + 1, col + 1)][1]) in self.unloads:
+                        # done in SHIP -> SHIP operation
+                        break
+                    
+                    # look for available space in buffer to move container
+                    for c in range(BUFF_COLS - 1, -1, -1):
+                        if self.buffer_state[(BUFF_ROWS, c + 1)][1] != 'UNUSED':
+                            continue # column is completely full, go to next one
+                        spot_found = False
 
-                                # calculates time to fully unload from ship and onto truck
-                                # manhattan distance + 2 min (time to load onto truck)
-                                cont_cost = abs(unload_zone[0] - key[0]) + abs(unload_zone[1] - key[1]) + 2
+                        for r in range(BUFF_ROWS):
+                            if self.buffer_state[(r + 1, c + 1)][1] != 'UNUSED':
+                                continue # space is occupied, go up a row
+                            
+                            # found available space
+                            spot_found = True
 
-                                # create new node and add it to list of child nodes
-                                new_child = Node(new_ship, copy.deepcopy(self.buffer_state), new_unloads, self, self.g + cont_cost)
-                                child_nodes.append(new_child)
-                            # container to be moved but not unloaded
-                            else:
-                                # check for valid spots within ship bay
-                                for k, v in self.state.items():
-                                    # space is not in same column as container
-                                    # space is available to be moved into
-                                    if k[1] != key[1] and v[1] == 'UNUSED':
-                                        # check if space below is occupied
-                                        # or on bottom row
-                                        if k[0] == 1 or self.state[(k[0] - 1, k[1])][1] != 'UNUSED':
-                                            # move container to available space
-                                            new_ship = copy.deepcopy(self.state)
-                                            new_ship[k] = list(new_ship[key])
-                                            new_ship[key][0] = 0
-                                            new_ship[key][1] = 'UNUSED'
+                            # move container to buffer
+                            new_ship = copy.deepcopy(self.state)
+                            new_buff = copy.deepcopy(self.buffer_state)
+                            new_buff[(r + 1, c + 1)] = list(new_ship[(row + 1, col + 1)])
 
-                                            # calculate cost of move
-                                            cont_cost = abs(key[0] - k[0]) + abs(key[1] - k[1])
+                            # mark space in ship as empty
+                            new_ship[(row + 1, col + 1)] = [0, 'UNUSED']
 
-                                            # create new node and add it to list of child nodes
-                                            new_child = Node(new_ship, copy.deepcopy(self.buffer_state), list(self.unloads), self, self.g + cont_cost)
-                                            child_nodes.append(new_child)
+                            # calculate cost of move
+                            cont_cost = abs(unload_zone[0] - (row + 1)) + abs(unload_zone[1] - (col + 1)) + 4 + abs(buff_unload[0] - (r + 1)) + abs(buff_unload[1] - (c + 1))
 
-                                # check for valid spot within buffer
-                                spot_found = False
-                                for c in range(BUFF_COLS - 1, -1, -1):
-                                    for r in range(BUFF_ROWS):
-                                        if self.buffer_state[(r + 1, c + 1)][1] == 'UNUSED':
-                                            spot_found = True
+                            # create new node and add to list of child nodes
+                            new_child = Node(new_ship, new_buff, list(self.unloads), self.sequence_type, self, self.g + cont_cost)
+                            child_nodes.append(new_child)
 
-                                            # move container to open space in buffer
-                                            new_ship = copy.deepcopy(self.state)
-                                            new_buff = copy.deepcopy(self.buffer_state)
-                                            new_buff[(r + 1, c + 1)] = list(new_ship[key])
+                            break
 
-                                            # mark previous space as empty
-                                            new_ship[key][0] = 0
-                                            new_ship[key][1] = 'UNUSED'
+                        # found closest space in buffer
+                        if spot_found:
+                            break
 
-                                            # calculate cost of move
-                                            # ship -> unload_zone -> buff_unload 
-                                            # -> buffer
-                                            cont_cost = abs(unload_zone[0] - key[0]) + abs(unload_zone[1] - key[1]) + 4 + abs(buff_unload[0] - (r + 1)) + abs(buff_unload[1] - (c + 1))
+                    # found the topmost container in ship column
+                    if container_found:
+                        break
 
-                                            # create new node and add it to list of
-                                            # children
-                                            new_child = Node(new_ship, new_buff, list(self.unloads), self, self.g + cont_cost)
-                                            child_nodes.append(new_child)
-                                            break
-                                    if spot_found:
-                                        break
-
-                        # balance operation
-                        if self.sequence_type == 'balance':
-                            # check for valid spots within ship bay
-                            for k, v in self.state.items():
-                                # space is not in same column as container
-                                # space is available to be moved into
-                                if k[1] != key[1] and v[1] == 'UNUSED':
-                                    # check if space below is occupied
-                                    # or on bottom row
-                                    if k[0] == 1 or self.state[(k[0] - 1, k[1])][1] != 'UNUSED':
-                                        # move container to available space
-                                        new_ship = copy.deepcopy(self.state)
-                                        new_ship[k] = list(new_ship[key])
-                                        new_ship[key][0] = 0
-                                        new_ship[key][1] = 'UNUSED'
-
-                                        # calculate cost of move
-                                        cont_cost = abs(key[0] - k[0]) + abs(key[1] - k[1])
-
-                                        # create new node and add it to list of child nodes
-                                        new_child = Node(new_ship, copy.deepcopy(self.buffer_state), list(self.unloads), self, self.g + cont_cost)
-                                        child_nodes.append(new_child)
-
-                            # check for valid spot within buffer
-                            spot_found = False
-                            for c in range(BUFF_COLS - 1, -1, -1):
-                                for r in range(BUFF_ROWS):
-                                    if self.buffer_state[(r + 1, c + 1)][1] == 'UNUSED':
-                                        spot_found = True
-
-                                        # move container to open space in buffer
-                                        new_ship = copy.deepcopy(self.state)
-                                        new_buff = copy.deepcopy(self.buffer_state)
-                                        new_buff[(r + 1, c + 1)] = list(new_ship[key])
-
-                                        # mark previous space as empty
-                                        new_ship[key][0] = 0
-                                        new_ship[key][1] = 'UNUSED'
-
-                                        # calculate cost of move
-                                        # ship -> unload_zone -> buff_unload 
-                                        # -> buffer
-                                        cont_cost = abs(unload_zone[0] - key[0]) + abs(unload_zone[1] - key[1]) + 4 + abs(buff_unload[0] - (r + 1)) + abs(buff_unload[1] - (c + 1))
-
-                                        # create new node and add it to list of
-                                        # children
-                                        new_child = Node(new_ship, new_buff, list(self.unloads), self, self.g + cont_cost)
-                                        child_nodes.append(new_child)
-                                        break
-                                if spot_found:
-                                    break
-
-                    # not top row
-                    else:
-                        # nothing on top of container
-                        if self.state[(key[0] + 1, key[1])][1] == 'UNUSED':
-                            # load/unload operation
-                            if self.sequence_type == 'transfer':
-                                # container to be unloaded
-                                if (value[0], value[1]) in self.unloads:
-                                    # remove container from ship
-                                    new_ship = copy.deepcopy(self.state)
-                                    new_ship[key][0] = 0
-                                    new_ship[key][1] = 'UNUSED'
-
-                                    # update unload list
-                                    new_unloads = list(self.unloads)
-                                    new_unloads.remove((value[0], value[1]))
-
-                                    # calculates time to fully unload from ship and onto truck
-                                    # manhattan distance + 2 min (time to load onto truck)
-                                    cont_cost = abs(unload_zone[0] - key[0]) + abs(unload_zone[1] - key[1]) + 2
-
-                                    # create new node and add it to list of child nodes
-                                    new_child = Node(new_ship, copy.deepcopy(self.buffer_state), new_unloads, self, self.g + cont_cost)
-                                    child_nodes.append(new_child)
-                                # container to be moved but not unloaded
-                                else:
-                                    # check for valid spot within ship bay
-                                    for k, v in self.state.items():
-                                        # space is not in same column as container
-                                        # space is available to be moved into
-                                        if k[1] != key[1] and v[1] == 'UNUSED':
-                                            # check if space below is occupied
-                                            # or on bottom row
-                                            if k[0] == 1 or self.state[(k[0] - 1, k[1])][1] != 'UNUSED':
-                                                # move container to available space
-                                                new_ship = copy.deepcopy(self.state)
-                                                new_ship[k] = list(new_ship[key])
-                                                new_ship[key][0] = 0
-                                                new_ship[key][1] = 'UNUSED'
-
-                                                # calculate cost of move
-                                                cont_cost = abs(key[0] - k[0]) + abs(key[1] - k[1])
-
-                                                # create new node and add it to list of child nodes
-                                                new_child = Node(new_ship, copy.deepcopy(self.buffer_state), list(self.unloads), self, self.g + cont_cost)
-                                                child_nodes.append(new_child)
-                                    
-                                    # check for valid spot within buffer
-                                    spot_found = False
-                                    for c in range(BUFF_COLS - 1, -1, -1):
-                                        for r in range(BUFF_ROWS):
-                                            if self.buffer_state[(r + 1, c + 1)][1] == 'UNUSED':
-                                                spot_found = True
-
-                                                # move container to open space in buffer
-                                                new_ship = copy.deepcopy(self.state)
-                                                new_buff = copy.deepcopy(self.buffer_state)
-                                                new_buff[(r + 1, c + 1)] = list(new_ship[key])
-
-                                                # mark previous space as empty
-                                                new_ship[key][0] = 0
-                                                new_ship[key][1] = 'UNUSED'
-
-                                                # calculate cost of move
-                                                # ship -> unload_zone -> buff_unload 
-                                                # -> buffer
-                                                cont_cost = abs(unload_zone[0] - key[0]) + abs(unload_zone[1] - key[1]) + 4 + abs(buff_unload[0] - (r + 1)) + abs(buff_unload[1] - (c + 1))
-
-                                                # create new node and add it to list of
-                                                # children
-                                                new_child = Node(new_ship, new_buff, list(self.unloads), self, self.g + cont_cost)
-                                                child_nodes.append(new_child)
-                                                break
-                                        if spot_found:
-                                            break
-
-                            # balance operation
-                            if self.sequence_type == 'balance':
-                                # check for valid spot within ship bay
-                                for k, v in self.state.items():
-                                    # space is not in same column as container
-                                    # space is available to be moved into
-                                    if k[1] != key[1] and v[1] == 'UNUSED':
-                                        # check if space below is occupied
-                                        # or on bottom row
-                                        if k[0] == 1 or self.state[(k[0] - 1, k[1])][1] != 'UNUSED':
-                                            # move container to available space
-                                            new_ship = copy.deepcopy(self.state)
-                                            new_ship[k] = list(new_ship[key])
-                                            new_ship[key][0] = 0
-                                            new_ship[key][1] = 'UNUSED'
-
-                                            # calculate cost of move
-                                            cont_cost = abs(key[0] - k[0]) + abs(key[1] - k[1])
-
-                                            # create new node and add it to list of child nodes
-                                            new_child = Node(new_ship, copy.deepcopy(self.buffer_state), list(self.unloads), self, self.g + cont_cost)
-                                            child_nodes.append(new_child)
-                                
-                                # check for valid spot within buffer
-                                spot_found = False
-                                for c in range(BUFF_COLS - 1, -1, -1):
-                                    for r in range(BUFF_ROWS):
-                                        if self.buffer_state[(r + 1, c + 1)][1] == 'UNUSED':
-                                            spot_found = True
-
-                                            # move container to open space in buffer
-                                            new_ship = copy.deepcopy(self.state)
-                                            new_buff = copy.deepcopy(self.buffer_state)
-                                            new_buff[(r + 1, c + 1)] = list(new_ship[key])
-
-                                            # mark previous space as empty
-                                            new_ship[key][0] = 0
-                                            new_ship[key][1] = 'UNUSED'
-
-                                            # calculate cost of move
-                                            # ship -> unload_zone -> buff_unload 
-                                            # -> buffer
-                                            cont_cost = abs(unload_zone[0] - key[0]) + abs(unload_zone[1] - key[1]) + 4 + abs(buff_unload[0] - (r + 1)) + abs(buff_unload[1] - (c + 1))
-
-                                            # create new node and add it to list of
-                                            # children
-                                            new_child = Node(new_ship, new_buff, list(self.unloads), self, self.g + cont_cost)
-                                            child_nodes.append(new_child)
-                                            break
-                                    if spot_found:
-                                        break
-
-        # a balance operation also considers containers in the buffer that need to be moved back into the ship
+        # a balance sequence will check for moves from buffer to ship
         if self.sequence_type == 'balance':
-            for col in range(BUFF_COLS - 1, -1 -1):
+            # BUFFER -> SHIP
+            for col in range(BUFF_COLS - 1, -1, -1):
                 empty_space = False
-                for row in range(BUFF_ROWS -1, -1, -1):
+                container_found = False
+                for row in range(BUFF_ROWS - 1, -1, -1):
                     # since buffer is loaded from the rightmost column
                     # once an empty slot is encountered, that is the final column
-                    if buffer_grid[(row + 1, col + 1)][1] == 'UNUSED':
+                    if self.buffer_state[(row + 1, col + 1)][1] == 'UNUSED':
                         empty_space = True
                         continue
 
+                    # eligible container found
+                    container_found = True
 
-                    
+                    # look for places in ship to put buffer container
+                    for c in range(COLS):
+                        for r in range(ROWS - 1, -1, -1):
+                            if self.state[(r + 1, c + 1)][1] != 'UNUSED' or self.state[(r + 1, c + 1)][1] == 'NAN':
+                                break # something in space, done with column
 
+                            # found place in ship to put container
+                            
+                            # check if something is below available space or it's on the bottom row
+                            if (r and self.state[(r, c + 1)][1] != 'UNUSED') or not r:
+                                # put container in ship
+                                new_ship = copy.deepcopy(self.state)
+                                new_buff = copy.deepcopy(self.buffer_state)
+                                new_ship[(r + 1, c + 1)] = list(new_buff[(row + 1, col + 1)])
+                                new_buff[(row + 1, col + 1)] = [0, 'UNUSED']
 
+                                # calculate cost of move
+                                cont_cost = abs(buff_unload[0] - (row + 1)) + abs(buff_unload[1] - (col + 1)) + 4 + abs(unload_zone[0] - (r + 1)) + abs(unload_zone[1] - (c + 1))
+
+                                # create new node and add to list of children
+                                new_child = Node(new_ship, new_buff, list(self.unloads), self.sequence_type, self, self.g + cont_cost)
+                                child_nodes.append(new_child)
+
+                                break
+
+                    # found the topmost container in the column of buffer
+                    if container_found:
+                        break
+
+                # last column in buffer
+                if empty_space:
+                    break
+        
         return child_nodes
 
 # a star search algorithm
 # root = starting node
-# sequence type = 'transfer' or 'balance'
 def a_star(root):
     initial_time = time.time();
 
@@ -442,15 +331,16 @@ def a_star(root):
         curr_node = open_nodes.pop(0) # look at node with lowest f score
 
         # for transfer sequence -- goal state: all desired containers are unloaded
-        if curr_node.sequence_type == 'transfer' and not curr_node.unloads:  # or curr_node.h == 0
+        if curr_node.sequence_type == 'transfer' and not curr_node.unloads:
             print('time:', (time.time() - initial_time) * 1000)
             return curr_node
 
-        # for balance sequence -- goal state: heavier side / lighter side = 1.1
+        # for balance sequence -- goal state: lighter side / heavier side > 0.9
+        # and buffer is emptys
         if curr_node.sequence_type == 'balance':
             cont_in_buffer = len([i for i in curr_node.buffer_state.values() if i[1] != 'UNUSED'])
             # check for an empty buffer
-            if not cont_in_buffer and mass_ratio(curr_node.state) < 1.1:
+            if not cont_in_buffer and mass_ratio(curr_node.state) > 0.9:
                 print('time:', (time.time() - initial_time) * 1000)
                 return curr_node
 
@@ -480,51 +370,42 @@ def a_star(root):
 # returns cost of moves
 def unload_buffer(ship_grid, buffer_grid):
     buffer_cost = 0 # total cost of moves from buffer to ship
-    ship_space = (ROWS, 1) # first space on ship to begin loading into
+    available_spots = [] # potential spaces to load into
 
-    for col in range(BUFF_COLS - 1, -1, -1):
+    for c in range(COLS):
+        for r in range(ROWS):
+            # found an empty spot in the ship
+            if ship_grid[(r + 1, c + 1)][1] == 'UNUSED':
+                # either the space is above ground level and there's
+                # something underneath it
+                # or the space is on ground level
+                if (r and ship_grid[(r, c + 1)][1] != 'UNUSED') or not r:
+                    # calculate cost of move
+                    cont_cost = 4 + abs(unload_zone[0] - (r + 1)) + abs(unload_zone[1] - (c + 1))
+
+                    available_spots.append((cont_cost, (r + 1, c + 1)))
+    
+    available_spots.sort() # sort available spaces by lowest time cost
+
+    for c in range(BUFF_COLS - 1, -1, -1):
         empty_space = False
-        for row in range(BUFF_ROWS - 1, -1 , -1):
+        for r in range(BUFF_ROWS - 1, -1 , -1):
             # since buffer is loaded from the rightmost column
             # once an empty slot is encountered, that is the final column
-            if buffer_grid[(row + 1, col + 1)][1] == 'UNUSED':
+            if buffer_grid[(r + 1, c + 1)][1] == 'UNUSED':
                 empty_space = True
                 continue
 
-            container_on = False
+            # load container in the closest spot in ship
+            closest_spot = available_spots.pop(0)
+            ship_grid[closest_spot[1]] = buffer_grid[(r + 1, c + 1)]
+            buffer_grid[(r + 1, c + 1)] = [0, 'UNUSED']
+            
+            cont_cost = closest_spot[0] + abs(buff_unload[0] - (r + 1)) + abs(buff_unload[1] - (c + 1))
 
-            # put container back into closest space on ship
-            for c in range(ship_space[1] - 1, COLS):
-                for r in range(ship_space[0] - 1, -1, -1):
-                    # found an empty spot in the ship
-                    if ship_grid[(r + 1, c + 1)][1] == 'UNUSED':
-                        # either the space is above ground level and there's
-                        # something underneath it
-                        # or the space is on ground level
-                        if (r and ship_grid[(r, c + 1)][1] != 'UNUSED') or not r:
-                            # put container onto ship
-                            ship_grid[(r + 1, c + 1)] = list(buffer_grid[(row + 1, col + 1)])
+            buffer_cost += cont_cost
 
-                            # mark space in buffer as empty
-                            buffer_grid[(row + 1, col + 1)] = [0, 'UNUSED']
-
-                            # calculate cost of move
-                            cont_cost = abs(buff_unload[0] - (row + 1)) + abs(buff_unload[1] - (col + 1)) + 4 + abs(unload_zone[0] - (r + 1)) + abs(unload_zone[1] - (c + 1))
-
-                            buffer_cost += cont_cost
-
-                            # mark starting space on ship for next iteration
-                            start_row = r + 2 if r + 2 <= ROWS else ROWS
-                            ship_space = (start_row, c + 1)
-
-                            container_on = True # successfully loaded container from buffer
-                            break
-
-                if container_on:
-                    break
-
-        # column contained an empty space, so that is last column to be 
-        # unloaded
+        # column contained an empty space, so that is the last column
         if empty_space:
             break
 
@@ -533,71 +414,52 @@ def unload_buffer(ship_grid, buffer_grid):
 # moves containers from trucks onto ship
 # returns cost of moves
 def load_ship(ship_grid, loads):
-    load_cost = 0 # total cost to move containers from trucks and onto ship
+    load_cost = 0 # total cost of moves from truck to ship
+    available_spots = [] # potential spaces to load into
 
-    if loads:
-        for c in range(COLS):
-            for r in range(ROWS):
-                # found an empty spot in the ship
-                if ship_grid[(r + 1, c + 1)][1] == 'UNUSED':
-                    # either the space is above ground level and there's
-                    # something underneath it
-                    # or the space is on ground level
-                    if (r and ship_grid[(r, c + 1)][1] != 'UNUSED') or not r:
-                        ship_grid[(r + 1, c + 1)] = list(loads.pop(0)) # load container
+    for c in range(COLS):
+        for r in range(ROWS):
+            # found an empty spot in the ship
+            if ship_grid[(r + 1, c + 1)][1] == 'UNUSED':
+                # either the space is above ground level and there's
+                # something underneath it
+                # or the space is on ground level
+                if (r and ship_grid[(r, c + 1)][1] != 'UNUSED') or not r:
+                    # calculate cost of move
+                    cont_cost = 2 + abs(unload_zone[0] - (r + 1)) + abs(unload_zone[1] - (c + 1))
 
-                        cont_cost = 2 + abs(unload_zone[0] - (r + 1)) + abs(unload_zone[1] - (c + 1))
+                    available_spots.append((cont_cost, (r + 1, c + 1)))
+    
+    available_spots.sort() # sort available spaces by lowest time cost
 
-                        load_cost += cont_cost
-
-                # no more containers to load
-                if not loads:
-                    break
-
-            if not loads:
-                break
+    # loads containers starting at space with lowest cost
+    for cont in loads:
+        closest_spot = available_spots.pop(0)
+        ship_grid[closest_spot[1]] = [cont[0], cont[1]]
+        load_cost += closest_spot[0]
 
     return load_cost
 
 
-# ** MAIN **
+# MAIN 
 
-node = Node(ship, buffer, unload_list)
-
-
-# -- balancing goal state
-# [01,01], {00000}, NAN
-# [01,02], {00006}, Hat
-# [01,03], {00004}, Mat
-# [01,04], {00008}, Rat
-# [02,01], {00005}, Bat
-# [02,02], {00009}, Cat
-# [02,03], {00000}, UNUSED
-# [02,04], {00010}, Beer
-# [03,01], {00000}, UNUSED
-# [03,02], {00000}, UNUSED
-# [03,03], {00000}, UNUSED
-# [03,04], {00000}, UNUSED
-# [04,01], {00000}, UNUSED
-# [04,02], {00000}, UNUSED
-# [04,03], {00000}, UNUSED
-# [04,04], {00000}, UNUSED
-# --- left side is 20 kg
-# --- right side is 22 kg
+root = Node(ship, buffer, unload_list, 'transfer')
 
 
+goal_node = a_star(root)
 
+i = 1
+curr = goal_node
+print('goal:', curr.state)
+# # while curr.parent:
+# #     curr = curr.parent
+# #     print(i, curr.state, curr.g)
+# #     i += 1
 
+goal_node.buffer_state[(1, 24)] = [69, 'Ham']
 
+unload_buffer(goal_node.state, goal_node.buffer_state)
+print('--', goal_node.state)
 
-# node = Node(ship, buffer, unload_list)
-
-# goal_node = a_star(node)
-
-# i = 1
-# curr = goal_node
-# print('goal:', curr.state)
-# while curr.parent:
-#     curr = curr.parent
-#     print(i, curr.state, curr.g)
-#     i += 1
+load_ship(goal_node.state, load_list)
+print('--', goal_node.state)
