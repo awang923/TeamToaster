@@ -46,3 +46,15 @@
 2023-03-05 19:12:59 LeBron James signed in.
 2023-03-05 19:15:41 Jon Jones signed in.
 2023-03-05 19:16:12 Jon Jones signed in.
+2023-03-05 19:55:48 John Wick signed in.
+2023-03-05 19:55:52 /Users/liam/Downloads/ShipCase1.txt has been opened.
+2023-03-05 19:58:27 John Wick signed in.
+2023-03-05 19:58:35 /Users/liam/Downloads/ShipCase1.txt has been opened.
+2023-03-05 20:10:51 John Wick signed in.
+2023-03-05 20:10:56 /Users/liam/Downloads/ShipCase1.txt has been opened.
+2023-03-05 20:11:55 John Wick signed in.
+2023-03-05 20:12:02 /Users/liam/Downloads/ShipCase1.txt has been opened.
+2023-03-05 20:14:25 John Wick signed in.
+2023-03-05 20:14:29 /Users/liam/Downloads/ShipCase1.txt has been opened.
+2023-03-05 20:15:33 John Wick signed in.
+2023-03-05 20:15:39 /Users/liam/Downloads/ShipCase1.txt has been opened.

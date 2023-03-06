@@ -5,6 +5,7 @@ import globals
 from app import *
 from datetime import datetime
 import re
+from operation import Operation
 
 #from frontend.app import Node, search
 
@@ -66,6 +67,7 @@ class ComputingPage(tk.Frame):
                     #print(i)
                 moves_time = Label(self, text = "Estimated Time to Perform Moves = " + str(load_ship_node.g) +"min")
                 moves_time.place(relx = .5, rely = step_y, anchor=CENTER)
+                globals.operations_list = order_of_operations(load_ship_node)
             elif globals.op == 'balance':
                 root = Node(globals.ship, buffer_init, globals.unload_list, 'balance')
                 initial_time = time.time()
@@ -81,6 +83,9 @@ class ComputingPage(tk.Frame):
                     #print(i)
                 moves_time = Label(self, text = "Estimated Time to Perform Moves = " + str(unload_buffer_node.g) +"min")
                 moves_time.place(relx = .5, rely = step_y, anchor=CENTER)
+                globals.operations_list = order_of_operations(unload_buffer_node)
+            
+        
 
 
 
@@ -138,3 +143,6 @@ class ComputingPage(tk.Frame):
 
         sign_in_button = Button(self, text = "Sign In", command= lambda: sign_in_popup())
         sign_in_button.place(relx=.8, rely=.05, anchor="e")
+
+        done_button = Button(self, text="DONE", command=lambda: controller.show_frame(Operation))
+        done_button.place(rely=.95, relx=.9, anchor=SE)

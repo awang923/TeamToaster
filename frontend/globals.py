@@ -13,7 +13,9 @@ def init():
     unload_list = []
     global op
     op = ""
-    
+    global operations_list
+    operations_list = []
+
 
 #def get_filename():
     #test = lambda: string_filename
