@@ -1,19 +1,21 @@
 import copy
 import time
+import globals
+
 
 # dimensions of ship bay
-ROWS = 3
-COLS = 4
+ROWS = 8
+COLS = 12
 
 # coordinates of unload zone on ship
 unload_zone = (ROWS + 1, 1)
 
-manifest_file = '../files/small_manifest.txt' # needs to be given at runtime
+manifest_file = 'files/small_manifest.txt' # needs to be given at runtime
 
 # contents of ship
 # key = (x, y)
 # value = [mass, description]
-ship = {}
+#ship = {}
 
 # ** RUN THIS BEFORE ALL OPERATIONS **
 # takes in a manifest text file and populates a ship grid according to its contents
@@ -33,21 +35,22 @@ def parse_manifest(ship_grid, filename):
             name = entries[2].strip()
 
             # add to ship
-            ship[pos] = [wt, name]
+            #ship[pos] = [wt, name]
+            globals.ship[pos] = [wt, name]
 
 # containers to be unloaded -- (mass, description)
-unload_list = [
-    (5, 'Beer'),
-    (3, 'Mat')
-]
+#unload_list = [
+    #(3450, 'Beer'),
+    #(3450, 'Beer')
+#]
 
-NUM_UNLOADS = len(unload_list)
+#NUM_UNLOADS = len(unload_list)
 
 # containers to be loaded -- (mass, description)
-load_list = [
-    (6969, 'Taco'),
-    (70, 'Dog')
-]
+#load_list = [
+    #(6969, 'Taco'),
+    #(70, 'Dog')
+#]
 
 # dimensions of buffer
 BUFF_ROWS = 4
@@ -56,12 +59,12 @@ BUFF_COLS = 24
 # buffer
 # key = coordinates (row, column)
 # value = [mass, description]
-buffer = {}
+#buffer = {}
 
 # populate buffer with empty spots
-for r in range(BUFF_ROWS):
-    for c in range(BUFF_COLS):
-        buffer[(r + 1, c + 1)] = [0, 'UNUSED']
+#for r in range(BUFF_ROWS):
+    #for c in range(BUFF_COLS):
+        #buffer[(r + 1, c + 1)] = [0, 'UNUSED']
 
 # coordinates of unload zone in buffer
 buff_unload = (BUFF_ROWS + 1, BUFF_COLS)
@@ -84,9 +87,9 @@ def count_containers_above(state, cont_coords):
 # lighter side / heavier side
 def mass_ratio(state):
     left = sum([state[(i + 1, j + 1)][0] for i in range(ROWS) for j in range(COLS // 2)])
-    right = sum([state[(i + 1, j + 1)][0] for i in range(ROWS) for j in range(2, COLS)])
+    right = sum([state[(i + 1, j + 1)][0] for i in range(ROWS) for j in range(COLS //2, COLS)])
 
-    return min((left, right)) / max((left, right))
+    return min((left, right)) / max((left, right)) if max (left,right) > 0  else 0
 
 # Node class -- configuration of ship grid at current time
 class Node:
@@ -134,7 +137,7 @@ class Node:
         # f = (ROWS * COLS) // 2 if f > (ROWS * COLS) // 2 else f
         # self.h = (f * total_cost) / ROWS
 
-        self.h = total_cost * (len(self.unloads) / NUM_UNLOADS)
+        self.h = total_cost * (len(self.unloads) / len(globals.unload_list))
 
         # self.h = total_cost
 
@@ -360,7 +363,7 @@ class Node:
 # search algorithm
 # root = starting node
 def search(root):
-    initial_time = time.time();
+    initial_time = time.time()
 
     open_nodes = [] # nodes to be visted
     closed_nodes = [] # nodes that have already been visited
@@ -421,78 +424,119 @@ def search(root):
 # ** RUN AFTER UNLOADING SHIP **
 # moves containers from buffer and back onto ship
 # returns cost of moves
-def unload_buffer(ship_grid, buffer_grid):
-    buffer_cost = 0 # total cost of moves from buffer to ship
-    available_spots = [] # potential spaces to load into
-
-    for c in range(COLS):
-        for r in range(ROWS):
-            # found an empty spot in the ship
-            if ship_grid[(r + 1, c + 1)][1] == 'UNUSED':
-                # either the space is above ground level and there's
-                # something underneath it
-                # or the space is on ground level
-                if (r and ship_grid[(r, c + 1)][1] != 'UNUSED') or not r:
-                    # calculate cost of move
-                    cont_cost = 4 + abs(unload_zone[0] - (r + 1)) + abs(unload_zone[1] - (c + 1))
-
-                    available_spots.append((cont_cost, (r + 1, c + 1)))
-    
-    available_spots.sort() # sort available spaces by lowest time cost
-
-    for c in range(BUFF_COLS - 1, -1, -1):
-        empty_space = False
-        for r in range(BUFF_ROWS - 1, -1 , -1):
+def unload_buffer(node):
+    for col in range(BUFF_COLS - 1, -1, -1):
+        empty_space = True
+        for row in range(BUFF_ROWS - 1, -1, -1):
             # since buffer is loaded from the rightmost column
             # once an empty slot is encountered, that is the final column
-            if buffer_grid[(r + 1, c + 1)][1] == 'UNUSED':
+            if node.buffer_state[(row + 1, col + 1)][1] == 'UNUSED':
                 empty_space = True
                 continue
 
-            # load container in the closest spot in ship
-            closest_spot = available_spots.pop(0)
-            ship_grid[closest_spot[1]] = buffer_grid[(r + 1, c + 1)]
-            buffer_grid[(r + 1, c + 1)] = [0, 'UNUSED']
-            
-            cont_cost = closest_spot[0] + abs(buff_unload[0] - (r + 1)) + abs(buff_unload[1] - (c + 1))
+            available_spots = [] # potential spaces to load into
 
-            buffer_cost += cont_cost
+            for c in range(COLS):
+                for r in range(ROWS):
+                    # found an empty spot in the ship
+                    if node.state[(r + 1, c + 1)][1] == 'UNUSED':
+                        # either the space is above ground level and there's
+                        # something underneath it
+                        # or the space is on ground level
+                        if (r and node.state[(r, c + 1)][1] != 'UNUSED') or not r:
+                            # calculate cost of move
+                            cont_cost = 4 + abs(unload_zone[0] - (r + 1)) + abs(unload_zone[1] - (c + 1))
+
+                            available_spots.append((cont_cost, (r + 1, c + 1)))
+
+            # put container into closest spot on ship
+            if available_spots:
+                available_spots.sort() # sort available spaces by lowest time cost
+
+                closest_spot = available_spots.pop(0)
+
+                # move container from buffer into ship
+                new_ship = copy.deepcopy(node.state)
+                new_buff = copy.deepcopy(node.buffer_state)
+                new_ship[closest_spot[1]] = node.buffer_state[(row + 1, col + 1)]
+                new_buff[(row + 1, col + 1)] = [0, 'UNUSED']
+
+                # calculate full cost to move from buffer to ship
+                cont_cost = closest_spot[0] + abs(buff_unload[0] - (row + 1)) + abs(buff_unload[1] - (col + 1))
+
+                # format coordinates
+                x1 = str(row + 1) if len(str(row + 1)) > 1 else '0' + str(row + 1)
+                y1 = str(col + 1) if len(str(col + 1)) > 1 else '0' + str(col + 1)
+                coord1 = '[' + x1 + ',' + y1 + ']'
+
+                ship_r, ship_c = closest_spot[1][0], closest_spot[1][1]
+                x2 = str(ship_r) if len(str(ship_r)) > 1 else '0' + str(ship_r)
+                y2 = str(ship_c) if len(str(ship_c)) > 1 else '0' + str(ship_c)
+                coord2 = '[' + x2 + ',' + y2 + ']'
+
+                # create output string
+                output_str = 'Move BUFFER ' + coord1 + ' ' + node.buffer_state[(row + 1, col + 1)][1] + ' to ' + coord2
+
+                # create new node
+                new_node = Node(new_ship, new_buff, list(node.unloads), node.sequence_type, node, node.g + cont_cost, output_str)
+
+                node = new_node
 
         # column contained an empty space, so that is the last column
         if empty_space:
             break
 
-    return buffer_cost
+    return node
 
 # ** RUN AFTER UNLOADING SHIP **
 # moves containers from trucks onto ship
 # returns cost of moves
-def load_ship(ship_grid, loads):
-    load_cost = 0 # total cost of moves from truck to ship
-    available_spots = [] # potential spaces to load into
-
-    for c in range(COLS):
-        for r in range(ROWS):
-            # found an empty spot in the ship
-            if ship_grid[(r + 1, c + 1)][1] == 'UNUSED':
-                # either the space is above ground level and there's
-                # something underneath it
-                # or the space is on ground level
-                if (r and ship_grid[(r, c + 1)][1] != 'UNUSED') or not r:
-                    # calculate cost of move
-                    cont_cost = 2 + abs(unload_zone[0] - (r + 1)) + abs(unload_zone[1] - (c + 1))
-
-                    available_spots.append((cont_cost, (r + 1, c + 1)))
-    
-    available_spots.sort() # sort available spaces by lowest time cost
-
-    # loads containers starting at space with lowest cost
+def load_ship(node, loads):
     for cont in loads:
-        closest_spot = available_spots.pop(0)
-        ship_grid[closest_spot[1]] = [cont[0], cont[1]]
-        load_cost += closest_spot[0]
+        available_spots = [] # potential spaces to load into
 
-    return load_cost
+        for c in range(COLS):
+            for r in range(ROWS):
+                # found an empty spot in the ship
+                if node.state[(r + 1, c + 1)][1] == 'UNUSED':
+                    # either the space is above ground level and there's
+                    # something underneath it
+                    # or the space is on ground level
+                    if (r and node.state[(r, c + 1)][1] != 'UNUSED') or not r:
+                        # calculate cost of move
+                        cont_cost = 2 + abs(unload_zone[0] - (r + 1)) + abs(unload_zone[1] - (c + 1))
+
+                        available_spots.append((cont_cost, (r + 1, c + 1)))
+
+        if available_spots:
+            available_spots.sort() # sort available spaces by lowest time cost
+
+            #for i in available_spots:
+                #print(i)
+
+            closest_spot = available_spots.pop(0)
+
+            # load container in the closest spot in ship
+            new_ship = copy.deepcopy(node.state)
+            new_buff = copy.deepcopy(node.buffer_state)
+            new_ship[closest_spot[1]] = [cont[0], cont[1]]
+
+            # format coordinates
+            row = closest_spot[1][0]
+            col = closest_spot[1][1]
+            x = str(row) if len(str(row)) > 1 else '0' + str(row)
+            y = str(col) if len(str(col)) > 1 else '0' + str(col)
+            coord = '[' + x + ',' + y + ']'
+
+            # create output string
+            output_str = 'Load ' + cont[1] + ' to ' + coord
+
+            # create new Node
+            new_node = Node(new_ship, new_buff, list(node.unloads), node.sequence_type, node, node.g + closest_spot[0], output_str)
+
+            node = new_node
+
+    return node
 
 # ** RUN AFTER COMPLETING ALL OPERATIONS **
 # creates the outbound manifest containing configuration of containers on ship
@@ -539,9 +583,12 @@ def order_of_operations(node):
 # MAIN 
 
 # populate ship grid
-parse_manifest(ship, manifest_file)
+#parse_manifest(ship, manifest_file)
 
-root = Node(ship, buffer, unload_list, 'transfer')
-goal = search(root)
-for i in order_of_operations(goal):
-    print(i)
+#root = Node(ship, buffer, unload_list, 'transfer')
+#goal = search(root)
+#final_load_cost = load_ship(goal.state, load_list)
+#unload buffer back to ship
+#for i in order_of_operations(goal):
+    #print(i)
+#
