@@ -6,6 +6,9 @@ from upload_manifest_page import UploadManifestPage
 from load_page import InputLoadPage
 from unload_page import InputUnloadPage
 from computing_page import ComputingPage
+import globals
+
+globals.init()
 
 class Application(tk.Tk):
 	def __init__(self, *args, **kwargs):
