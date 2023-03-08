@@ -3,6 +3,7 @@ from tkinter import *
 import re
 from app import *
 import globals
+import time
 
 class Operation(tk.Frame):
     #order_left = len(globals.operations_list)
@@ -24,31 +25,74 @@ class Operation(tk.Frame):
         #self.order_index = self.order_index + 1
 
         def on_view_click():
-            on_view_click.order_left = len(globals.operations_list)
-            manifest = open(globals.string_filename, 'r')
+            # on_view_click.order_left = len(globals.operations_list)
+            # manifest = open(globals.string_filename, 'r')
+            on_view_click.order_left = len(orders)
+            manifest = open('TeamToaster/files/manifest.txt', 'r')
             manifest_lines = manifest.readlines()
             regex = ".(\d\d),(\d\d).,\s{(\d*)}.\s([a-zA-Z]*)"
 
-            order_label = Label(self, text=globals.operations_list[self.order_index], fg='red')
-            order_label.place(relx=0.2, rely=self.order_label_y, anchor=CENTER)
-            self.order_label_y = self.order_label_y + 0.03
-            self.order_index = self.order_index + 1
-        
-            def add_order():
-                temp = Label(self, text=globals.operations_list[self.order_index], fg='red')
-                return temp
+            # parses operation string for movement location and coordinates
+            def parse_string(str):
+                text = str.split()
 
-            order_regex = ".\s([a-zA-Z]*[(\d\d),(\d\d)])"
-            def parse_order(order):
-                order_matches = re.search(order_regex, globals.operations_list[self.order_index])
+                # type of operation (move, load, unload)
+                operation = text[0]
+
+                # locations of movement
+                prev, dest = None, None
+
+                # get containers original location
+                if operation == 'Move':
+                    # move from buffer to ship
+                    if text[1] == 'BUFFER':
+                        prev_coords = text[2]
+                        dest_coords = text[-1]
+                        prev_loc = 'BUFFER'
+                        dest_loc = 'SHIP'
+                    else:
+                        # move from ship to buffer
+                        if text[-2] == 'BUFFER':
+                            prev_coords = text[1]
+                            dest_coords = text[-1]
+                            prev_loc = 'SHIP'
+                            dest_loc = 'BUFFER'
+                        # move from ship to ship
+                        else:
+                            prev_coords = text[1]
+                            dest_coords = text[-1]
+                            prev_loc = 'SHIP'
+                            dest_loc = 'SHIP'
+
+                    # get previous location
+                    pos = [int(i) for i in prev_coords.strip('][').split(',')]
+                    pos = (pos[0], pos[1])
+                    prev = (prev_loc, pos)
+
+                    # get destination location
+                    pos = [int(i) for i in dest_coords.strip('][').split(',')]
+                    pos = (pos[0], pos[1])
+                    dest = (dest_loc, pos) 
                 
+                elif operation == 'Load':
+                    pos = [int(i) for i in text[-1].strip('][').split(',')]
+                    pos = (pos[0], pos[1])
+                    dest = ('SHIP', pos)
+                elif operation == 'Unload':
+                    pos = [int(i) for i in text[1].strip('][').split(',')]
+                    pos = (pos[0], pos[1])
+                    prev = ('SHIP', pos)
 
+                return (prev, dest)
+
+            ship_label = Label(self, text="SHIP")
+            ship_label.place(relx=0.53, rely=0.22, anchor=CENTER)
             ship_frame = Frame(self)
             temp = 9
-            containers = []
+            ship = []
             for x in range(8):
                 temp -= 1
-                containers.append([])
+                ship.append([])
                 for y in range(12):
                     for line in manifest_lines:
                         regex_matches = re.search(regex, str(line))
@@ -65,24 +109,127 @@ class Operation(tk.Frame):
                                 box = LabelFrame(ship_frame, width=40, height=40)
                                 l = Label(box, text=regex_matches.group(4)[:6])
                                 l.place(relx=0.5, rely=0.5, anchor=CENTER)
-                            containers[x].append(l)                            
+                            ship[x].append(l)                            
                     box.grid(row=x, column=y)
             ship_frame.place(relx=0.74, rely=0.45, anchor=CENTER)
-            # print(containers[7][1].cget('text'))
-            # print(l.cget('text'))
 
-            #create the ui of ship & buffer
+            buffer_label = Label(self, text="BUFFER")
+            buffer_label.place(relx=0.05, rely=0.65, anchor=CENTER)
             buffer_frame = Frame(self)
+            buffer = []
             for x in range(4):
+                buffer.append([])
                 for y in range(24):
                     box = LabelFrame(buffer_frame, width=40, height= 40)
                     l = Label(box)
                     l.place(relx=0.5, rely=0.5, anchor=CENTER)
+                    buffer[x].append(l)
                     box.grid(row=x, column=y)
             buffer_frame.place(relx=0.5, rely=0.78, anchor=CENTER)
             
+            truck_label = Label(self, text="TRUCK")
+            truck_label.place(relx=0.2, rely=0.5, anchor=CENTER)
+            box = LabelFrame(self, width=40, height= 40)
+            truck_container = Label(box)
+            truck_container.place(relx=0.5, rely=0.5, anchor=CENTER)
+            box.place(relx=0.2, rely=0.55, anchor=CENTER)
+
+            on_view_click.flag = True
+            on_view_click.animate = True
+            def update(prev_x, prev_y, dest_x, dest_y, container_name, prev, dest):
+                if prev != None and dest != None:
+                    if on_view_click.flag:
+                        prev[prev_x][prev_y].config(bg = '#80BD76', text=container_name)
+                        dest[dest_x][dest_y].config(bg = 'white', text="")
+                        on_view_click.flag = not on_view_click.flag
+                    else:
+                        prev[dest_x][dest_y].config(bg = '#80BD76', text=container_name)
+                        dest[prev_x][prev_y].config(bg = 'white', text="")
+                        on_view_click.flag = not on_view_click.flag
+                elif prev == None:
+                    if on_view_click.flag:
+                        truck_label.config(bg = '#80BD76', text=container_name)
+                        dest[dest_x][dest_y].config(bg = 'white', text="")
+                        on_view_click.flag = not on_view_click.flag
+                    else:
+                        truck_label.config(bg = '#80BD76', text=container_name)
+                        dest[prev_x][prev_y].config(bg = 'white', text="")
+                        on_view_click.flag = not on_view_click.flag
+                else:
+                    if on_view_click.flag:
+                        prev[prev_x][prev_y].config(bg = '#80BD76', text=container_name)
+                        truck_label.config(bg = 'white', text="")
+                        on_view_click.flag = not on_view_click.flag
+                    else:
+                        prev[dest_x][dest_y].config(bg = 'white', text="")
+                        truck_label.config(bg = '#80BD76', text=container_name)
+                        on_view_click.flag = not on_view_click.flag
+                # temp = containers[prev_x][prev_y]
+                # containers[prev_x][prev_y] = containers[dest_x][dest_y]
+                # containers[dest_x][dest_y] = temp
+
+            def animation():
+                if on_view_click.animate:
+                    update(on_view_click.prev_x, on_view_click.prev_y, 
+                           on_view_click.dest_x, on_view_click.dest_y, 
+                           on_view_click.container_name,
+                           prev, dest)
+                    self.after(2000, lambda: animation())
+
+            # order_label = Label(self, text=globals.operations_list[self.order_index], fg='red')
+            order_label = Label(self, text=orders[self.order_index], fg='red')
+            order_label.place(relx=0.2, rely=self.order_label_y, anchor=CENTER)
+            
+            # set x, y, container list and container name for the first animation
+            parse_order = parse_string(orders[self.order_index])
+
+            if parse_order[0][0] == 'SHIP':
+                prev = ship
+            elif parse_order[0][0] == 'BUFFER':
+                prev = buffer
+            else:
+                prev = None
+
+            if parse_order[1][0] == 'SHIP':
+                dest = ship
+            elif parse_order[1][0] == 'BUFFER':
+                dest = buffer
+            else:
+                dest = None
+
+            if prev != None:
+                on_view_click.prev_x = (len(prev)-1) - (parse_order[0][1][0]-1)
+                on_view_click.prev_y = parse_order[0][1][1] - 1
+                on_view_click.container_name = prev[on_view_click.prev_x][on_view_click.prev_y].cget('text')
+            if dest != None:
+                on_view_click.dest_x = (len(dest)-1) - (parse_order[1][1][0]-1)
+                on_view_click.dest_y = parse_order[1][1][1] - 1
+            if prev == None and dest != None:
+                on_view_click.container_name = dest[on_view_click.prev_x][on_view_click.prev_y].cget('text')
+
+            animation()
+
+            self.order_label_y = self.order_label_y + 0.03
+            self.order_index = self.order_index + 1
+        
+            def add_order():
+                temp = Label(self, text=orders[self.order_index], fg='red')
+                return temp
+
             def on_next_press():
                 if on_view_click.order_left > 1:
+                    # update animation with new x and y                    
+                    ship[on_view_click.dest_x][on_view_click.dest_y].config(bg = 'white', text=on_view_click.container_name)
+                    ship[on_view_click.prev_x][on_view_click.prev_y].config(bg = 'white', text="")
+                    parse_order = parse_string(orders[self.order_index])
+                    on_view_click.prev_x = 7 - (parse_order[0][1][0] - 1)
+                    on_view_click.prev_y = parse_order[0][1][1] - 1
+                    on_view_click.dest_x = 7 - (parse_order[1][1][0] - 1)
+                    on_view_click.dest_y = parse_order[1][1][1] - 1
+                    on_view_click.container_name = ship[on_view_click.prev_x][on_view_click.prev_y].cget('text')
+                    animation()
+                    
+                    # display label with the next order sequence
                     order_label['fg'] = 'black'
                     if self.prev_label is not None:
                         self.prev_label['fg'] = 'black'
@@ -96,9 +243,9 @@ class Operation(tk.Frame):
 
             done_button = Button(self, text="NEXT", command=lambda: on_next_press())
             done_button.place(rely=.95, relx=.9, anchor=SE)
-
-        view_animation = Button(self, text = "View Animation", command= lambda:on_view_click())
-        view_animation.place(relx=.5, rely=.05, anchor= CENTER)
+        on_view_click()
+        # view_animation = Button(self, text = "View Animation", command= lambda:on_view_click())
+        # view_animation.place(relx=.5, rely=.05, anchor= CENTER)
     
 
        
