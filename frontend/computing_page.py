@@ -51,23 +51,39 @@ class ComputingPage(tk.Frame):
             print(globals.op)
 
             if globals.op == 'transfer':
-                root = Node(globals.ship, buffer_init, globals.unload_list, 'transfer')
-                initial_time = time.time()
-                goal = search(root)
-                unload_buffer_node = unload_buffer(goal)
-                load_ship_node = load_ship(unload_buffer_node, globals.load_list)
-                #print(load_ship_node.state)
-                compute_time = (time.time() - initial_time) * 1000
-                compute_time_label = Label(self, text = "Total Time Computing = " + str(compute_time) + "ms")
-                compute_time_label.place(relx=.5, rely=.1, anchor=CENTER)
-                for i in order_of_operations(load_ship_node):
-                    step = Label(self, text=i)
-                    step.place(relx = .5, rely = step_y, anchor=CENTER)
-                    step_y += 0.05
-                    #print(i)
-                moves_time = Label(self, text = "Estimated Time to Perform Moves = " + str(load_ship_node.g) +"min")
-                moves_time.place(relx = .5, rely = step_y, anchor=CENTER)
-                globals.operations_list = order_of_operations(load_ship_node)
+                if len(globals.load_list) != 0:
+                    root = Node(globals.ship, buffer_init, globals.unload_list, 'transfer')
+                    initial_time = time.time()
+                    goal = search(root)
+                    unload_buffer_node = unload_buffer(goal)
+                    load_ship_node = load_ship(unload_buffer_node, globals.load_list)
+                    #print(load_ship_node.state)
+                    compute_time = (time.time() - initial_time) * 1000
+                    compute_time_label = Label(self, text = "Total Time Computing = " + str(compute_time) + "ms")
+                    compute_time_label.place(relx=.5, rely=.1, anchor=CENTER)
+                    for i in order_of_operations(load_ship_node):
+                        step = Label(self, text=i)
+                        step.place(relx = .5, rely = step_y, anchor=CENTER)
+                        step_y += 0.05
+                        #print(i)
+                    moves_time = Label(self, text = "Estimated Time to Perform Moves = " + str(load_ship_node.g) +"min")
+                    moves_time.place(relx = .5, rely = step_y, anchor=CENTER)
+                    globals.operations_list = order_of_operations(load_ship_node)
+                else:
+                    initial_time = time.time()
+                    root = Node(globals.ship, buffer_init, globals.unload_list, 'transfer')
+                    load_ship_node = load_ship(root, globals.load_list)
+                    compute_time = (time.time() - initial_time) * 1000
+                    compute_time_label = Label(self, text = "Total Time Computing = " + str(compute_time) + "ms")
+                    compute_time_label.place(relx=.5, rely=.1, anchor=CENTER)
+                    for i in order_of_operations(load_ship_node):
+                        step = Label(self, text=i)
+                        step.place(relx = .5, rely = step_y, anchor=CENTER)
+                        step_y += 0.05
+                        #print(i)
+                    moves_time = Label(self, text = "Estimated Time to Perform Moves = " + str(load_ship_node.g) +"min")
+                    moves_time.place(relx = .5, rely = step_y, anchor=CENTER)
+                    globals.operations_list = order_of_operations(load_ship_node)
             elif globals.op == 'balance':
                 root = Node(globals.ship, buffer_init, globals.unload_list, 'balance')
                 initial_time = time.time()

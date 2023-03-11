@@ -8,6 +8,7 @@ class InputLoadPage(tk.Frame):
     count = 0
     y = 0.2
     def __init__(self, parent, controller):
+        global removed
         tk.Frame.__init__(self, parent)
         load_prompt = Label(self, text = "Please input all containers to be loaded")
         load_prompt.place(relx=.5, rely=.1, anchor= CENTER)
@@ -93,6 +94,8 @@ class InputLoadPage(tk.Frame):
             try:
                 int (container_weight_entry.get())
                 globals.load_list.append((int(container_weight_entry.get()), container_name_entry.get()))
+                for x in globals.load_list:
+                    print(x)
                 confirm_enter.config(text= container_name_entry.get() + ", " + container_weight_entry.get() + "kg has been entered")
                 #confirm_enter.after(5000, confirm_fade())
                 container_name_entry.delete(0, END)
@@ -113,6 +116,14 @@ class InputLoadPage(tk.Frame):
 
         done_button = Button(self, text="DONE", command=lambda: on_done_pressed())
         done_button.place(rely=.9, relx=.9, anchor=SE)
+
+        def clear_press():
+            globals.load_list.clear()
+            confirm_enter.config(text="LOAD LIST HAS BEEN CLEARED")
+            print(globals.load_list)
+        
+        clear_button = Button(self, text="CLEAR LOAD LIST", command=lambda: clear_press(), width=15)
+        clear_button.place(rely=.85, relx=.9, anchor=SE)
 
         def sign_in_popup():
             popup = Toplevel(self)

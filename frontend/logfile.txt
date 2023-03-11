@@ -58,3 +58,47 @@
 2023-03-05 20:14:29 /Users/liam/Downloads/ShipCase1.txt has been opened.
 2023-03-05 20:15:33 John Wick signed in.
 2023-03-05 20:15:39 /Users/liam/Downloads/ShipCase1.txt has been opened.
+2023-03-10 17:24:25 John Wick signed in.
+2023-03-10 17:24:35 /Users/liam/Downloads/ShipCase1.txt has been opened.
+2023-03-10 17:27:16 John Wick signed in.
+2023-03-10 17:27:25  has been opened.
+2023-03-10 17:27:26  has been opened.
+2023-03-10 17:27:28  has been opened.
+2023-03-10 17:27:29  has been opened.
+2023-03-10 17:27:29  has been opened.
+2023-03-10 17:27:30  has been opened.
+2023-03-10 17:27:30  has been opened.
+2023-03-10 17:27:30  has been opened.
+2023-03-10 17:27:40 /Users/liam/Downloads/ShipCase1.txt has been opened.
+2023-03-10 17:38:10 LeBron James signed in.
+2023-03-10 17:38:17 /Users/liam/Downloads/ShipCase1.txt has been opened.
+2023-03-10 17:45:35 LeBron James signed in.
+2023-03-10 17:45:40 /Users/liam/Downloads/ShipCase1.txt has been opened.
+2023-03-10 17:49:35 LeBron James signed in.
+2023-03-10 17:49:42 /Users/liam/Downloads/ShipCase1.txt has been opened.
+2023-03-10 17:52:06 LeBron James signed in.
+2023-03-10 17:52:12 /Users/liam/Downloads/ShipCase1.txt has been opened.
+2023-03-10 17:53:43 John signed in.
+2023-03-10 17:53:49 /Users/liam/Downloads/ShipCase1.txt has been opened.
+2023-03-10 17:54:56 Bob signed in.
+2023-03-10 17:55:02 /Users/liam/Downloads/ShipCase1.txt has been opened.
+2023-03-10 17:56:09 Bob signed in.
+2023-03-10 17:56:15 /Users/liam/Downloads/ShipCase1.txt has been opened.
+2023-03-10 17:57:23 Bob signed in.
+2023-03-10 17:57:34 /Users/liam/Downloads/ShipCase1.txt has been opened.
+2023-03-10 18:31:39 Bob signed in.
+2023-03-10 18:31:47 /Users/liam/Downloads/ShipCase1.txt has been opened.
+2023-03-10 18:32:48 Bob signed in.
+2023-03-10 18:32:57 /Users/liam/Downloads/ShipCase1.txt has been opened.
+2023-03-10 18:33:42 Bob signed in.
+2023-03-10 18:33:49 /Users/liam/Downloads/ShipCase1.txt has been opened.
+2023-03-10 18:40:17 Bob signed in.
+2023-03-10 18:40:29 /Users/liam/Downloads/ShipCase1.txt has been opened.
+2023-03-10 18:41:25 Bob signed in.
+2023-03-10 18:41:30 /Users/liam/Downloads/ShipCase1.txt has been opened.
+2023-03-10 18:42:24 Bob signed in.
+2023-03-10 18:42:29 /Users/liam/Downloads/ShipCase1.txt has been opened.
+2023-03-10 18:43:30 Bob signed in.
+2023-03-10 18:43:35 /Users/liam/Downloads/ShipCase1.txt has been opened.
+2023-03-10 18:45:32 Bob signed in.
+2023-03-10 18:45:39 /Users/liam/Downloads/ShipCase1.txt has been opened.

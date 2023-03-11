@@ -179,6 +179,14 @@ class InputUnloadPage(tk.Frame):
         done_button = Button(self, text="DONE", command=lambda: done_button_click())
         done_button.place(rely=.9, relx=.9, anchor=SE)
 
+        def clear_press():
+            globals.load_list.clear()
+            confirm_unload.config(text="LOAD LIST HAS BEEN CLEARED")
+            print(globals.load_list)
+        
+        clear_button = Button(self, text="CLEAR LOAD LIST", command=lambda: clear_press(), width=15)
+        clear_button.place(rely=.85, relx=.9, anchor=SE)
+
         def sign_in_popup():
             popup = Toplevel(self)
             popup.geometry("700x250")
