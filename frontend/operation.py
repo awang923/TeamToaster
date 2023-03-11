@@ -4,6 +4,7 @@ import re
 from app import *
 import globals
 import time
+import upload_manifest_page
 
 class Operation(tk.Frame):
     #order_left = len(globals.operations_list)
@@ -173,7 +174,7 @@ class Operation(tk.Frame):
                     update(on_view_click.prev_x, on_view_click.prev_y, 
                            on_view_click.dest_x, on_view_click.dest_y, 
                            on_view_click.container_name,
-                           prev, dest)
+                           on_view_click.prev, on_view_click.dest)
                     self.after(2000, lambda: animation())
 
             # order_label = Label(self, text=globals.operations_list[self.order_index], fg='red')
@@ -183,30 +184,32 @@ class Operation(tk.Frame):
             # set x, y, container list and container name for the first animation
             parse_order = parse_string(orders[self.order_index])
 
-            if parse_order[0][0] == 'SHIP':
-                prev = ship
-            elif parse_order[0][0] == 'BUFFER':
-                prev = buffer
-            else:
-                prev = None
+            def set_variables(parse_order):
+                if parse_order[0][0] == 'SHIP':
+                    prev = ship
+                elif parse_order[0][0] == 'BUFFER':
+                    prev = buffer
+                else:
+                    prev = None
 
-            if parse_order[1][0] == 'SHIP':
-                dest = ship
-            elif parse_order[1][0] == 'BUFFER':
-                dest = buffer
-            else:
-                dest = None
+                if parse_order[1][0] == 'SHIP':
+                    dest = ship
+                elif parse_order[1][0] == 'BUFFER':
+                    dest = buffer
+                else:
+                    dest = None
 
-            if prev != None:
-                on_view_click.prev_x = (len(prev)-1) - (parse_order[0][1][0]-1)
-                on_view_click.prev_y = parse_order[0][1][1] - 1
-                on_view_click.container_name = prev[on_view_click.prev_x][on_view_click.prev_y].cget('text')
-            if dest != None:
-                on_view_click.dest_x = (len(dest)-1) - (parse_order[1][1][0]-1)
-                on_view_click.dest_y = parse_order[1][1][1] - 1
-            if prev == None and dest != None:
-                on_view_click.container_name = dest[on_view_click.prev_x][on_view_click.prev_y].cget('text')
-
+                if prev != None:
+                    on_view_click.prev_x = (len(prev)-1) - (parse_order[0][1][0]-1)
+                    on_view_click.prev_y = parse_order[0][1][1] - 1
+                    on_view_click.container_name = prev[on_view_click.prev_x][on_view_click.prev_y].cget('text')
+                if dest != None:
+                    on_view_click.dest_x = (len(dest)-1) - (parse_order[1][1][0]-1)
+                    on_view_click.dest_y = parse_order[1][1][1] - 1
+                if prev == None and dest != None:
+                    on_view_click.container_name = dest[on_view_click.prev_x][on_view_click.prev_y].cget('text')
+                return prev, dest
+            on_view_click.prev, on_view_click.dest = set_variables(parse_order)
             animation()
 
             self.order_label_y = self.order_label_y + 0.03
@@ -218,15 +221,11 @@ class Operation(tk.Frame):
 
             def on_next_press():
                 if on_view_click.order_left > 1:
-                    # update animation with new x and y                    
-                    ship[on_view_click.dest_x][on_view_click.dest_y].config(bg = 'white', text=on_view_click.container_name)
-                    ship[on_view_click.prev_x][on_view_click.prev_y].config(bg = 'white', text="")
+                    # update animation with new x and y                  
+                    on_view_click.prev[on_view_click.dest_x][on_view_click.dest_y].config(bg = 'white', text=on_view_click.container_name)
+                    on_view_click.dest[on_view_click.prev_x][on_view_click.prev_y].config(bg = 'white', text="")
                     parse_order = parse_string(orders[self.order_index])
-                    on_view_click.prev_x = 7 - (parse_order[0][1][0] - 1)
-                    on_view_click.prev_y = parse_order[0][1][1] - 1
-                    on_view_click.dest_x = 7 - (parse_order[1][1][0] - 1)
-                    on_view_click.dest_y = parse_order[1][1][1] - 1
-                    on_view_click.container_name = ship[on_view_click.prev_x][on_view_click.prev_y].cget('text')
+                    on_view_click.prev, on_view_click.dest = set_variables(parse_order)
                     animation()
                     
                     # display label with the next order sequence
@@ -238,11 +237,30 @@ class Operation(tk.Frame):
                     self.order_label_y = self.order_label_y + 0.03
                     self.order_index = self.order_index + 1
                     self.prev_label = curr_label
-                    
                 on_view_click.order_left = on_view_click.order_left-1
+                if on_view_click.order_left < 1:
+                    on_view_click.prev[on_view_click.dest_x][on_view_click.dest_y].config(bg = 'white', text=on_view_click.container_name)
+                    on_view_click.dest[on_view_click.prev_x][on_view_click.prev_y].config(bg = 'white', text="")
+                    on_view_click.animate = False
+                    animation()
+                    done_button.config(text='DONE', command= lambda: open_reminder())
 
             done_button = Button(self, text="NEXT", command=lambda: on_next_press())
             done_button.place(rely=.95, relx=.9, anchor=SE)
+
+            def open_reminder():
+                popup= Toplevel(self)
+                popup.geometry("750x250")
+                popup_label = Label(popup, text= "Operation done.\n Remember to mail the updated Manifest.")
+                popup_label.place(relx=.5, rely=.4, anchor=CENTER)
+                confirm_button = Button(popup, text="Confirm", command=lambda: on_confirm_click(popup))
+                confirm_button.place(relx=.5, rely=.6, anchor=CENTER)
+            
+            def on_confirm_click(top):
+                top.destroy()
+                top.update()
+                controller.show_frame(upload_manifest_page.UploadManifestPage)
+
         on_view_click()
         # view_animation = Button(self, text = "View Animation", command= lambda:on_view_click())
         # view_animation.place(relx=.5, rely=.05, anchor= CENTER)
