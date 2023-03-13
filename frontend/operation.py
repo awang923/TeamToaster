@@ -64,9 +64,24 @@ class Operation(tk.Frame):
 
         sign_in_button = Button(self, text="Sign In",
                                 command=lambda: sign_in_popup())
-        sign_in_button.place(relx=.8, rely=.1, anchor="e")
+        sign_in_button.place(relx=.8, rely=.05, anchor="e")
+
+        ship_name = Label(self)
+        ship_name.place(relx =.05, rely =.05, anchor = NW)
+
+        def ship_name_click():
+            if globals.string_filename == "":
+                print("EMPTY")
+            else:
+                print(globals.string_filename)
+            ship_name.config(text=globals.string_filename)
+
+        ship_name_button = Button(self, text = "SHOW CURRENT SHIP NAME", command=lambda: ship_name_click())
+        ship_name_button.place(relx =.05, rely =0, anchor = NW)
 
         def on_view_click():
+            animation_frame = Frame(self)
+            animation_frame.place(relx=0.5, rely= 0.55, width=1000, height=725, anchor=CENTER)
             on_view_click.order_left = len(globals.operations_list)
             manifest = open(globals.string_filename, 'r')
             # on_view_click.order_left = len(globals.operations_list)
@@ -127,9 +142,9 @@ class Operation(tk.Frame):
 
                 return (prev, dest)
 
-            ship_label = Label(self, text="SHIP")
+            ship_label = Label(animation_frame, text="SHIP")
             ship_label.place(relx=0.53, rely=0.22, anchor=CENTER)
-            ship_frame = Frame(self)
+            ship_frame = Frame(animation_frame)
             temp = 9
             ship = []
             for x in range(8):
@@ -158,9 +173,9 @@ class Operation(tk.Frame):
                     box.grid(row=x, column=y)
             ship_frame.place(relx=0.74, rely=0.45, anchor=CENTER)
 
-            buffer_label = Label(self, text="BUFFER")
+            buffer_label = Label(animation_frame, text="BUFFER")
             buffer_label.place(relx=0.05, rely=0.65, anchor=CENTER)
-            buffer_frame = Frame(self)
+            buffer_frame = Frame(animation_frame)
             buffer = []
             for x in range(4):
                 buffer.append([])
@@ -172,9 +187,9 @@ class Operation(tk.Frame):
                     box.grid(row=x, column=y)
             buffer_frame.place(relx=0.5, rely=0.78, anchor=CENTER)
 
-            truck_label = Label(self, text="TRUCK")
+            truck_label = Label(animation_frame, text="TRUCK")
             truck_label.place(relx=0.2, rely=0.5, anchor=CENTER)
-            box = LabelFrame(self, width=40, height=40)
+            box = LabelFrame(animation_frame, width=40, height=40)
             truck_container = Label(box)
             truck_container.place(relx=0.5, rely=0.5, anchor=CENTER)
             box.place(relx=0.2, rely=0.55, anchor=CENTER)
@@ -188,30 +203,30 @@ class Operation(tk.Frame):
                         prev[prev_x][prev_y].config(
                             bg='#80BD76', text=container_name)
                         dest[dest_x][dest_y].config(
-                            bg=self.cget('bg'), text="")
+                            bg=animation_frame.cget('bg'), text="")
                         on_view_click.flag = not on_view_click.flag
                     else:
                         prev[dest_x][dest_y].config(
                             bg='#80BD76', text=container_name)
                         dest[prev_x][prev_y].config(
-                            bg=self.cget('bg'), text="")
+                            bg=animation_frame.cget('bg'), text="")
                         on_view_click.flag = not on_view_click.flag
                 elif prev == None:
                     if on_view_click.flag:
                         truck_container.config(bg='#80BD76', text=container_name)
-                        dest[dest_x][dest_y].config(bg=self.cget('bg'), text="")
+                        dest[dest_x][dest_y].config(bg=animation_frame.cget('bg'), text="")
                         on_view_click.flag = not on_view_click.flag
                     else:
-                        truck_container.config(bg=self.cget('bg'), text="")
+                        truck_container.config(bg=animation_frame.cget('bg'), text="")
                         dest[dest_x][dest_y].config(bg='#80BD76', text=container_name)
                         on_view_click.flag = not on_view_click.flag
                 else:
                     if on_view_click.flag:
                         prev[prev_x][prev_y].config(bg='#80BD76', text=container_name)
-                        truck_container.config(bg=self.cget('bg'), text="")
+                        truck_container.config(bg=animation_frame.cget('bg'), text="")
                         on_view_click.flag = not on_view_click.flag
                     else:
-                        prev[prev_x][prev_y].config(bg=self.cget('bg'), text="")
+                        prev[prev_x][prev_y].config(bg=animation_frame.cget('bg'), text="")
                         truck_container.config(bg='#80BD76', text=container_name)
                         on_view_click.flag = not on_view_click.flag
 
@@ -223,8 +238,8 @@ class Operation(tk.Frame):
                            on_view_click.prev, on_view_click.dest)
                     self.after(2000, lambda: animation())
 
-            # order_label = Label(self, text=globals.operations_list[self.order_index], fg='red')
-            order_label = Label(self, text=globals.operations_list[self.order_index], fg='red')
+            # order_label = Label(self, text=globals.operations_list[animation_frame.order_index], fg='red')
+            order_label = Label(animation_frame, text=globals.operations_list[self.order_index], fg='red')
             order_label.place(relx=0.2, rely=self.order_label_y, anchor=CENTER)
 
             # set x, y, container list and container name for the first animation
@@ -264,21 +279,21 @@ class Operation(tk.Frame):
             def set_end_of_animation():
                 #loading
                 if on_view_click.prev == None:
-                    truck_container.config(bg=self.cget('bg'), text="")
-                    on_view_click.dest[on_view_click.dest_x][on_view_click.dest_y].config(bg=self.cget('bg'), text=on_view_click.container_name)
+                    truck_container.config(bg=animation_frame.cget('bg'), text="")
+                    on_view_click.dest[on_view_click.dest_x][on_view_click.dest_y].config(bg=animation_frame.cget('bg'), text=on_view_click.container_name)
                 #unloading
                 elif on_view_click.dest == None:
-                    on_view_click.prev[on_view_click.prev_x][on_view_click.prev_y].config(bg=self.cget('bg'), text="")
-                    truck_container.config(bg=self.cget('bg'), text=on_view_click.container_name)
+                    on_view_click.prev[on_view_click.prev_x][on_view_click.prev_y].config(bg=animation_frame.cget('bg'), text="")
+                    truck_container.config(bg=animation_frame.cget('bg'), text=on_view_click.container_name)
                 else:
-                    on_view_click.prev[on_view_click.prev_x][on_view_click.prev_y].config(bg=self.cget('bg'), text="")
-                    on_view_click.dest[on_view_click.dest_x][on_view_click.dest_y].config(bg=self.cget('bg'), text=on_view_click.container_name)
+                    on_view_click.prev[on_view_click.prev_x][on_view_click.prev_y].config(bg=animation_frame.cget('bg'), text="")
+                    on_view_click.dest[on_view_click.dest_x][on_view_click.dest_y].config(bg=animation_frame.cget('bg'), text=on_view_click.container_name)
 
             self.order_label_y = self.order_label_y + 0.03
             self.order_index = self.order_index + 1
 
             def add_order():
-                temp = Label(self, text=globals.operations_list[self.order_index], fg='red')
+                temp = Label(animation_frame, text=globals.operations_list[self.order_index], fg='red')
                 return temp
 
             def on_next_press():
@@ -308,7 +323,7 @@ class Operation(tk.Frame):
                         text='DONE', command=lambda: open_reminder())
 
             done_button = Button(
-                self, text="NEXT", command=lambda: on_next_press())
+                animation_frame, text="NEXT", command=lambda: on_next_press())
             done_button.place(rely=.95, relx=.9, anchor=SE)
 
             def open_reminder():
@@ -325,11 +340,39 @@ class Operation(tk.Frame):
                 top.destroy()
                 top.update()
                 globals.init()
-                for widget in ship_frame.winfo_children():
-                    widget.destroy()
-                for widget in buffer_frame.winfo_children():
+                # for widget in ship_frame.winfo_children():
+                #     widget.destroy()
+                self.order_index = 0
+                self.order_label_y = 0.1
+                self.prev_label = None
+                for widget in animation_frame.winfo_children():
                     widget.destroy()
                 controller.show_frame(upload_manifest_page.UploadManifestPage)
+
+            comment_box = Entry(animation_frame, width = 50)
+            comment_box.place(relx=.1, rely =.95, anchor=W)
+            comment_box.bind('<Button-1>', lambda x: comment_focus_in(comment_box))
+            comment_box.bind('<FocusOut>', lambda x: comment_focus_out(comment_box, "Enter comment here"))
+
+            def comment_click():
+                current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                with open("frontend/logfile.txt", 'a') as logfile:
+                    logfile.write(current_time + " " + comment_box.get() + "\n")
+                logfile.close()
+                comment_box.delete(0, 'end')
+
+            comment_button = Button(animation_frame, text = "Comment", command= lambda: comment_click())
+            comment_button.place(relx = .7, rely = .95, anchor=E)
+
+            def comment_focus_in(entry):
+                if entry.cget('state') == 'disabled':
+                        entry.configure(state='normal')
+                        entry.delete(0,'end')
+            
+            def comment_focus_out(entry, placeholder):
+                if entry.get() == '':
+                        entry.insert(0, placeholder)
+                        entry.configure(state='disabled')
 
         # on_view_click()
         view_animation = Button(self, text = "View Animation", command= lambda:on_view_click())
