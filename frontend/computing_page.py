@@ -15,6 +15,19 @@ class ComputingPage(tk.Frame):
         #load_prompt = Label(self, text = "Computing...")
         #load_prompt.place(relx=.5, rely=.1, anchor= CENTER)
 
+        ship_name = Label(self)
+        ship_name.place(relx =.05, rely =.1, anchor = NW)
+
+        def ship_name_click():
+            if globals.string_filename == "":
+                print("EMPTY")
+            else:
+                print(globals.string_filename)
+            ship_name.config(text=globals.string_filename)
+
+        ship_name_button = Button(self, text = "SHOW CURRENT SHIP NAME", command=lambda: ship_name_click())
+        ship_name_button.place(relx =.05, rely =.05, anchor = NW)
+
         comment_box = Entry(self, width = 50)
         comment_box.place(relx=.1, rely =.95, anchor=W)
         comment_box.bind('<Button-1>', lambda x: comment_focus_in(comment_box))

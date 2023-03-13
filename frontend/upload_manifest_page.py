@@ -8,7 +8,7 @@ from app import *
 import globals
 from datetime import datetime
 
-
+globals.init()
 
 class UploadManifestPage(tk.Frame):
     def __init__(self, parent, controller):
