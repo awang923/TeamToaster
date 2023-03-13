@@ -4,11 +4,11 @@ import re
 from app import *
 import globals
 import time
+from datetime import datetime
 import upload_manifest_page
 
 
 class Operation(tk.Frame):
-    #order_left = len(globals.operations_list)
     order_index = 0
     order_label_y = 0.1
     prev_label = None
@@ -66,20 +66,11 @@ class Operation(tk.Frame):
                                 command=lambda: sign_in_popup())
         sign_in_button.place(relx=.8, rely=.1, anchor="e")
 
-        #manifest = open(globals.string_filename, 'r')
-        #manifest_lines = manifest.readlines()
-        #regex = ".(\d\d),(\d\d).,\s{(\d*)}.\s([a-zA-Z]*)"
-
-        #order_label = Label(self, text=globals.operations_list[self.order_index], fg='red')
-        #order_label.place(relx=0.2, rely=self.order_label_y, anchor=CENTER)
-        #self.order_label_y = self.order_label_y + 0.03
-        #self.order_index = self.order_index + 1
-
         def on_view_click():
+            on_view_click.order_left = len(globals.operations_list)
+            manifest = open(globals.string_filename, 'r')
             # on_view_click.order_left = len(globals.operations_list)
-            # manifest = open(globals.string_filename, 'r')
-            on_view_click.order_left = len(orders)
-            manifest = open('TeamToaster/files/manifest.txt', 'r')
+            # manifest = open('TeamToaster/files/manifest.txt', 'r')
             manifest_lines = manifest.readlines()
             regex = ".(\d\d),(\d\d).,\s{(\d*)}.\s([a-zA-Z]*)"
 
@@ -233,11 +224,11 @@ class Operation(tk.Frame):
                     self.after(2000, lambda: animation())
 
             # order_label = Label(self, text=globals.operations_list[self.order_index], fg='red')
-            order_label = Label(self, text=orders[self.order_index], fg='red')
+            order_label = Label(self, text=globals.operations_list[self.order_index], fg='red')
             order_label.place(relx=0.2, rely=self.order_label_y, anchor=CENTER)
 
             # set x, y, container list and container name for the first animation
-            parse_order = parse_string(orders[self.order_index])
+            parse_order = parse_string(globals.operations_list[self.order_index])
 
             def set_variables(parse_order):
                 if parse_order[0] != None:
@@ -265,9 +256,7 @@ class Operation(tk.Frame):
                     on_view_click.dest_y = parse_order[1][1][1] - 1
                 if prev == None and dest != None:
                     on_view_click.container_name = parse_order[1][2]
-                # if prev != None and dest == None:
-                #     on_view_click.container_name = prev[on_view_click.prev_x][on_view_click.prev_y].cget('text')
-
+                
                 return prev, dest
             on_view_click.prev, on_view_click.dest = set_variables(parse_order)
             animation()
@@ -289,14 +278,14 @@ class Operation(tk.Frame):
             self.order_index = self.order_index + 1
 
             def add_order():
-                temp = Label(self, text=orders[self.order_index], fg='red')
+                temp = Label(self, text=globals.operations_list[self.order_index], fg='red')
                 return temp
 
             def on_next_press():
                 if on_view_click.order_left > 1:
                     # update animation with new x and y
                     set_end_of_animation()
-                    parse_order = parse_string(orders[self.order_index])
+                    parse_order = parse_string(globals.operations_list[self.order_index])
                     on_view_click.prev, on_view_click.dest = set_variables(parse_order)
                     animation()
 
@@ -337,6 +326,6 @@ class Operation(tk.Frame):
                 top.update()
                 controller.show_frame(upload_manifest_page.UploadManifestPage)
 
-        on_view_click()
-        # view_animation = Button(self, text = "View Animation", command= lambda:on_view_click())
-        # view_animation.place(relx=.5, rely=.05, anchor= CENTER)
+        # on_view_click()
+        view_animation = Button(self, text = "View Animation", command= lambda:on_view_click())
+        view_animation.place(relx=.5, rely=.05, anchor= CENTER)
