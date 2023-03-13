@@ -325,7 +325,9 @@ class Operation(tk.Frame):
                 top.destroy()
                 top.update()
                 globals.init()
-                for widget in self.winfo_children():
+                for widget in ship_frame.winfo_children():
+                    widget.destroy()
+                for widget in buffer_frame.winfo_children():
                     widget.destroy()
                 controller.show_frame(upload_manifest_page.UploadManifestPage)
 
