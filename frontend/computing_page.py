@@ -59,6 +59,16 @@ class ComputingPage(tk.Frame):
                 buffer_init[(r + 1, c + 1)] = [0, 'UNUSED']
 
         
+        compute_time_label = Label(self, text = "")
+        compute_time_label.place(relx=.5, rely=.1, anchor=CENTER)
+        
+        moves_time = Label(self, text ="")
+        moves_time.place(relx = .5, rely = 0.9, anchor=CENTER)
+
+        moves_listbox = Listbox(self)
+        moves_listbox.place(relx = .5, rely =.3, anchor=CENTER)
+
+        
         def compute():
             step_y = 0.2
             print(globals.op)
@@ -72,30 +82,32 @@ class ComputingPage(tk.Frame):
                     load_ship_node = load_ship(unload_buffer_node, globals.load_list)
                     #print(load_ship_node.state)
                     compute_time = (time.time() - initial_time) * 1000
-                    compute_time_label = Label(self, text = "Total Time Computing = " + str(compute_time) + "ms")
-                    compute_time_label.place(relx=.5, rely=.1, anchor=CENTER)
+                    compute_time_label.config(text = "Total Time Computing = " + str(compute_time) + "ms")
+                    #compute_time_label.place(relx=.5, rely=.1, anchor=CENTER)
                     for i in order_of_operations(load_ship_node):
-                        step = Label(self, text=i)
-                        step.place(relx = .5, rely = step_y, anchor=CENTER)
-                        step_y += 0.05
+                        moves_listbox.insert(END, i + "\n")
+                        #step = Label(self, text=i)
+                        #step.place(relx = .5, rely = step_y, anchor=CENTER)
+                        #step_y += 0.05
                         #print(i)
-                    moves_time = Label(self, text = "Estimated Time to Perform Moves = " + str(load_ship_node.g) +"min")
-                    moves_time.place(relx = .5, rely = step_y, anchor=CENTER)
+                    moves_time.config(text = "Estimated Time to Perform Moves = " + str(load_ship_node.g) +"min")
+                    #moves_time.place(relx = .5, rely = 0.9, anchor=CENTER)
                     globals.operations_list = order_of_operations(load_ship_node)
                 else:
                     initial_time = time.time()
                     root = Node(globals.ship, buffer_init, globals.unload_list, 'transfer')
                     load_ship_node = load_ship(root, globals.load_list)
                     compute_time = (time.time() - initial_time) * 1000
-                    compute_time_label = Label(self, text = "Total Time Computing = " + str(compute_time) + "ms")
-                    compute_time_label.place(relx=.5, rely=.1, anchor=CENTER)
+                    compute_time.config(text = "Total Time Computing = " + str(compute_time) + "ms")
+                    #compute_time_label.place(relx=.5, rely=.1, anchor=CENTER)
                     for i in order_of_operations(load_ship_node):
-                        step = Label(self, text=i)
-                        step.place(relx = .5, rely = step_y, anchor=CENTER)
-                        step_y += 0.05
+                        moves_listbox.insert(END, i + "\n")
+                        #step = Label(self, text=i)
+                        #step.place(relx = .5, rely = step_y, anchor=CENTER)
+                        #step_y += 0.05
                         #print(i)
-                    moves_time = Label(self, text = "Estimated Time to Perform Moves = " + str(load_ship_node.g) +"min")
-                    moves_time.place(relx = .5, rely = step_y, anchor=CENTER)
+                    moves_time.config(text = "Estimated Time to Perform Moves = " + str(load_ship_node.g) +"min")
+                    #moves_time.place(relx = .5, rely = step_y, anchor=CENTER)
                     globals.operations_list = order_of_operations(load_ship_node)
             elif globals.op == 'balance':
                 root = Node(globals.ship, buffer_init, globals.unload_list, 'balance')
@@ -103,15 +115,16 @@ class ComputingPage(tk.Frame):
                 goal = search(root)
                 unload_buffer_node = unload_buffer(goal)
                 compute_time = (time.time() - initial_time) * 1000
-                compute_time_label = Label(self, text = "Total Time Computing = " + str(compute_time) + "ms")
-                compute_time_label.place(relx=.5, rely=.1, anchor=CENTER)
+                compute_time_label.config(text = "Total Time Computing = " + str(compute_time) + "ms")
+                #compute_time_label.place(relx=.5, rely=.1, anchor=CENTER)
                 for i in order_of_operations(unload_buffer_node):
-                    step = Label(self, text=i)
-                    step.place(relx = .5, rely = step_y, anchor=CENTER)
-                    step_y += 0.05
+                    moves_listbox.insert(END, i + "\n")
+                    #step = Label(self, text=i)
+                    #step.place(relx = .5, rely = step_y, anchor=CENTER)
+                    #step_y += 0.05
                     #print(i)
-                moves_time = Label(self, text = "Estimated Time to Perform Moves = " + str(unload_buffer_node.g) +"min")
-                moves_time.place(relx = .5, rely = step_y, anchor=CENTER)
+                moves_time.config(text = "Estimated Time to Perform Moves = " + str(unload_buffer_node.g) +"min")
+                #moves_time.place(relx = .5, rely = step_y, anchor=CENTER)
                 globals.operations_list = order_of_operations(unload_buffer_node)
             
         
@@ -173,5 +186,9 @@ class ComputingPage(tk.Frame):
         sign_in_button = Button(self, text = "Sign In", command= lambda: sign_in_popup())
         sign_in_button.place(relx=.8, rely=.05, anchor="e")
 
-        done_button = Button(self, text="DONE", command=lambda: controller.show_frame(Operation))
+        def on_done_press():
+            moves_listbox.delete(0, END)
+            controller.show_frame(Operation)
+
+        done_button = Button(self, text="DONE", command=lambda: on_done_press())
         done_button.place(rely=.95, relx=.9, anchor=SE)

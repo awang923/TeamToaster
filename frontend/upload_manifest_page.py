@@ -16,6 +16,8 @@ class UploadManifestPage(tk.Frame):
         upload_prompt = Label(self, text = "Please upload the manifest")
         upload_prompt.place(relx=.5, rely=.1, anchor= CENTER)
 
+        globals.init()
+
         comment_box = Entry(self, width = 50)
         comment_box.place(relx=.1, rely =.95, anchor=W)
         comment_box.bind('<Button-1>', lambda x: comment_focus_in(comment_box))
@@ -69,12 +71,15 @@ class UploadManifestPage(tk.Frame):
         sign_in_button = Button(self, text = "Sign In", command= lambda: sign_in_popup())
         sign_in_button.place(relx=.8, rely=.1, anchor="e")
 
+        filename_label = Label(self)
+        filename_label.place(relx=.5, rely=.3, anchor= CENTER)
+
         def open_file():
         # global file
             global filename
             filename = filedialog.askopenfilename(title = "Select File", filetypes=(("txt file", "*.txt"),))
-            filename_label = Label(self, text = filename)
-            filename_label.place(relx=.5, rely=.3, anchor= CENTER)
+            filename_label.config(text = filename)
+            #filename_label.place(relx=.5, rely=.3, anchor= CENTER)
             
            
 
@@ -88,6 +93,7 @@ class UploadManifestPage(tk.Frame):
             print(globals.string_filename + "string_filename upload_manifest_page")
             parse_manifest(globals.ship, globals.string_filename)
             print(globals.ship)
+            filename_label.config(text = "")
             controller.show_frame(SelectOperationPage)
 
         upload_button = Button(self, text="Select File", command=open_file)
