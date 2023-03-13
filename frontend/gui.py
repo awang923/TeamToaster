@@ -6,6 +6,7 @@ from upload_manifest_page import UploadManifestPage
 from load_page import InputLoadPage
 from unload_page import InputUnloadPage
 from computing_page import ComputingPage
+from operation import Operation
 import globals
 
 globals.init()
@@ -21,7 +22,7 @@ class Application(tk.Tk):
 		container.grid_columnconfigure(0, minsize=1000)
 
 		self.frames = {}
-		for F in (LoginPage, UploadManifestPage, SelectOperationPage, InputLoadPage, InputUnloadPage, ComputingPage):
+		for F in (LoginPage, UploadManifestPage, SelectOperationPage, InputLoadPage, InputUnloadPage, ComputingPage, Operation):
 			frame = F(container, self)
 			self.frames[F] = frame
 			frame.grid(row = 0, column = 0, sticky ="nsew")

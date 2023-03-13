@@ -13,6 +13,7 @@ import re
 import globals
 from datetime import datetime
 
+#tooltip code taken from: https://stackoverflow.com/questions/3221956/how-do-i-display-tooltips-in-tkinter
 class ToolTip(object):
 
     def __init__(self, widget):
@@ -60,6 +61,19 @@ class InputUnloadPage(tk.Frame):
         comment_box.place(relx=.1, rely =.95, anchor=W)
         comment_box.bind('<Button-1>', lambda x: comment_focus_in(comment_box))
         comment_box.bind('<FocusOut>', lambda x: comment_focus_out(comment_box, "Enter comment here"))
+
+        ship_name = Label(self)
+        ship_name.place(relx =.05, rely =.1, anchor = NW)
+
+        def ship_name_click():
+            if globals.string_filename == "":
+                print("EMPTY")
+            else:
+                print(globals.string_filename)
+            ship_name.config(text=globals.string_filename)
+
+        ship_name_button = Button(self, text = "SHOW CURRENT SHIP NAME", command=lambda: ship_name_click())
+        ship_name_button.place(relx =.05, rely =.05, anchor = NW)
 
         def comment_click():
             current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -178,6 +192,14 @@ class InputUnloadPage(tk.Frame):
         
         done_button = Button(self, text="DONE", command=lambda: done_button_click())
         done_button.place(rely=.9, relx=.9, anchor=SE)
+
+        def clear_press():
+            globals.load_list.clear()
+            confirm_unload.config(text="UNLOAD LIST HAS BEEN CLEARED")
+            print(globals.load_list)
+        
+        clear_button = Button(self, text="CLEAR UNLOAD LIST", command=lambda: clear_press(), width=15)
+        clear_button.place(rely=.85, relx=.9, anchor=SE)
 
         def sign_in_popup():
             popup = Toplevel(self)

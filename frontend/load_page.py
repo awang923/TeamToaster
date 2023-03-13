@@ -8,6 +8,7 @@ class InputLoadPage(tk.Frame):
     count = 0
     y = 0.2
     def __init__(self, parent, controller):
+        global removed
         tk.Frame.__init__(self, parent)
         load_prompt = Label(self, text = "Please input all containers to be loaded")
         load_prompt.place(relx=.5, rely=.1, anchor= CENTER)
@@ -18,6 +19,19 @@ class InputLoadPage(tk.Frame):
         comment_box.place(relx=.1, rely =.95, anchor=W)
         comment_box.bind('<Button-1>', lambda x: comment_focus_in(comment_box))
         comment_box.bind('<FocusOut>', lambda x: comment_focus_out(comment_box, "Enter comment here"))
+
+        ship_name = Label(self)
+        ship_name.place(relx =.05, rely =.1, anchor = NW)
+
+        def ship_name_click():
+            if globals.string_filename == "":
+                print("EMPTY")
+            else:
+                print(globals.string_filename)
+            ship_name.config(text=globals.string_filename)
+
+        ship_name_button = Button(self, text = "SHOW CURRENT SHIP NAME", command=lambda: ship_name_click())
+        ship_name_button.place(relx =.05, rely =.05, anchor = NW)
 
         def comment_click():
             current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -58,6 +72,15 @@ class InputLoadPage(tk.Frame):
         confirm_enter = Label(self, text="")
         confirm_enter.place(relx = .5, rely=.5, anchor=CENTER)
 
+
+
+        load_list_box = Listbox(self)
+        load_list_box.place(relx=.25, rely=.5, anchor=CENTER)
+
+        
+        
+
+
         def error_fade():
             error_message['text'] = ""
         
@@ -90,15 +113,22 @@ class InputLoadPage(tk.Frame):
             # container_weight_entry.configure(state='disabled')
             # container_weight_entry.bind('<Button-1>', lambda x: on_focus_in(container_weight_entry))
             # container_weight_entry.bind('<FocusOut>', lambda x: on_focus_out(container_weight_entry, 'Enter Container Weight'))
+
+
             try:
                 int (container_weight_entry.get())
+                if int(container_weight_entry.get()) < 0:
+                    raise ValueError
                 globals.load_list.append((int(container_weight_entry.get()), container_name_entry.get()))
+                for x in globals.load_list:
+                    print(x)
                 confirm_enter.config(text= container_name_entry.get() + ", " + container_weight_entry.get() + "kg has been entered")
+                load_list_box.insert(END, container_name_entry.get() + ", " + container_weight_entry.get() + "kg")
                 #confirm_enter.after(5000, confirm_fade())
                 container_name_entry.delete(0, END)
                 container_weight_entry.delete(0, END)
             except ValueError:
-                error_message.config(text="Only integers allowed for weight!")
+                error_message.config(text="Only positive integers allowed for weight!")
                 #error_message.after(5000, error_fade())
                 container_weight_entry.delete(0, END)
                 
@@ -113,6 +143,19 @@ class InputLoadPage(tk.Frame):
 
         done_button = Button(self, text="DONE", command=lambda: on_done_pressed())
         done_button.place(rely=.9, relx=.9, anchor=SE)
+
+        def clear_press():
+            try:
+                del globals.load_list[-1]
+                confirm_enter.config(text="LAST ENTRY HAS BEEN DELETED")
+                load_list_box.delete(load_list_box.size() - 1)
+                print(globals.load_list)
+                print("\n")
+            except IndexError:
+                confirm_enter.config(text = "LOAD LIST FULLY CLEARED")
+        
+        clear_button = Button(self, text="DELETE LAST ENTRY", command=lambda: clear_press(), width=15)
+        clear_button.place(rely=.85, relx=.9, anchor=SE)
 
         def sign_in_popup():
             popup = Toplevel(self)

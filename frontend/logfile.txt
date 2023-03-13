@@ -46,3 +46,139 @@
 2023-03-05 19:12:59 LeBron James signed in.
 2023-03-05 19:15:41 Jon Jones signed in.
 2023-03-05 19:16:12 Jon Jones signed in.
+2023-03-05 19:55:48 John Wick signed in.
+2023-03-05 19:55:52 /Users/liam/Downloads/ShipCase1.txt has been opened.
+2023-03-05 19:58:27 John Wick signed in.
+2023-03-05 19:58:35 /Users/liam/Downloads/ShipCase1.txt has been opened.
+2023-03-05 20:10:51 John Wick signed in.
+2023-03-05 20:10:56 /Users/liam/Downloads/ShipCase1.txt has been opened.
+2023-03-05 20:11:55 John Wick signed in.
+2023-03-05 20:12:02 /Users/liam/Downloads/ShipCase1.txt has been opened.
+2023-03-05 20:14:25 John Wick signed in.
+2023-03-05 20:14:29 /Users/liam/Downloads/ShipCase1.txt has been opened.
+2023-03-05 20:15:33 John Wick signed in.
+2023-03-05 20:15:39 /Users/liam/Downloads/ShipCase1.txt has been opened.
+2023-03-10 17:24:25 John Wick signed in.
+2023-03-10 17:24:35 /Users/liam/Downloads/ShipCase1.txt has been opened.
+2023-03-10 17:27:16 John Wick signed in.
+2023-03-10 17:27:25  has been opened.
+2023-03-10 17:27:26  has been opened.
+2023-03-10 17:27:28  has been opened.
+2023-03-10 17:27:29  has been opened.
+2023-03-10 17:27:29  has been opened.
+2023-03-10 17:27:30  has been opened.
+2023-03-10 17:27:30  has been opened.
+2023-03-10 17:27:30  has been opened.
+2023-03-10 17:27:40 /Users/liam/Downloads/ShipCase1.txt has been opened.
+2023-03-10 17:38:10 LeBron James signed in.
+2023-03-10 17:38:17 /Users/liam/Downloads/ShipCase1.txt has been opened.
+2023-03-10 17:45:35 LeBron James signed in.
+2023-03-10 17:45:40 /Users/liam/Downloads/ShipCase1.txt has been opened.
+2023-03-10 17:49:35 LeBron James signed in.
+2023-03-10 17:49:42 /Users/liam/Downloads/ShipCase1.txt has been opened.
+2023-03-10 17:52:06 LeBron James signed in.
+2023-03-10 17:52:12 /Users/liam/Downloads/ShipCase1.txt has been opened.
+2023-03-10 17:53:43 John signed in.
+2023-03-10 17:53:49 /Users/liam/Downloads/ShipCase1.txt has been opened.
+2023-03-10 17:54:56 Bob signed in.
+2023-03-10 17:55:02 /Users/liam/Downloads/ShipCase1.txt has been opened.
+2023-03-10 17:56:09 Bob signed in.
+2023-03-10 17:56:15 /Users/liam/Downloads/ShipCase1.txt has been opened.
+2023-03-10 17:57:23 Bob signed in.
+2023-03-10 17:57:34 /Users/liam/Downloads/ShipCase1.txt has been opened.
+2023-03-10 18:31:39 Bob signed in.
+2023-03-10 18:31:47 /Users/liam/Downloads/ShipCase1.txt has been opened.
+2023-03-10 18:32:48 Bob signed in.
+2023-03-10 18:32:57 /Users/liam/Downloads/ShipCase1.txt has been opened.
+2023-03-10 18:33:42 Bob signed in.
+2023-03-10 18:33:49 /Users/liam/Downloads/ShipCase1.txt has been opened.
+2023-03-10 18:40:17 Bob signed in.
+2023-03-10 18:40:29 /Users/liam/Downloads/ShipCase1.txt has been opened.
+2023-03-10 18:41:25 Bob signed in.
+2023-03-10 18:41:30 /Users/liam/Downloads/ShipCase1.txt has been opened.
+2023-03-10 18:42:24 Bob signed in.
+2023-03-10 18:42:29 /Users/liam/Downloads/ShipCase1.txt has been opened.
+2023-03-10 18:43:30 Bob signed in.
+2023-03-10 18:43:35 /Users/liam/Downloads/ShipCase1.txt has been opened.
+2023-03-10 18:45:32 Bob signed in.
+2023-03-10 18:45:39 /Users/liam/Downloads/ShipCase1.txt has been opened.
+2023-03-11 21:55:06 John Wick signed in.
+2023-03-11 21:55:16 /Users/liam/Downloads/ShipCase1.txt has been opened.
+2023-03-11 21:56:58 John Wick signed in.
+2023-03-11 21:57:09 /Users/liam/Downloads/ShipCase1.txt has been opened.
+2023-03-11 21:59:11 John Wick signed in.
+2023-03-11 21:59:17 /Users/liam/Downloads/ShipCase1.txt has been opened.
+2023-03-11 21:59:53 John Wick signed in.
+2023-03-11 21:59:58 /Users/liam/Downloads/ShipCase1.txt has been opened.
+2023-03-11 22:03:02 John Wick signed in.
+2023-03-11 22:03:07 /Users/liam/Downloads/ShipCase1.txt has been opened.
+2023-03-11 22:07:24 John Wick signed in.
+2023-03-11 22:07:29 /Users/liam/Downloads/ShipCase1.txt has been opened.
+2023-03-11 22:09:31 John Wick signed in.
+2023-03-11 22:09:36 /Users/liam/Downloads/ShipCase1.txt has been opened.
+2023-03-11 22:15:02 John Wick signed in.
+2023-03-11 22:15:07 /Users/liam/Downloads/ShipCase1.txt has been opened.
+2023-03-11 22:18:20 John Wick signed in.
+2023-03-11 22:18:25 /Users/liam/Downloads/ShipCase1.txt has been opened.
+2023-03-11 22:30:43 John Wick signed in.
+2023-03-11 22:30:48 /Users/liam/Downloads/ShipCase1.txt has been opened.
+2023-03-11 22:40:26 John Wick signed in.
+2023-03-11 22:40:32 /Users/liam/Downloads/ShipCase1.txt has been opened.
+2023-03-11 22:42:17 John Wick signed in.
+2023-03-11 22:42:21 /Users/liam/Downloads/ShipCase1.txt has been opened.
+2023-03-11 22:47:46 John Wick signed in.
+2023-03-11 22:47:51 /Users/liam/Downloads/ShipCase1.txt has been opened.
+2023-03-11 22:51:24 John Wick signed in.
+2023-03-11 22:51:33 /Users/liam/Downloads/ShipCase1.txt has been opened.
+2023-03-11 22:52:39 John Wick signed in.
+2023-03-11 22:52:44 /Users/liam/Downloads/ShipCase1.txt has been opened.
+2023-03-12 19:06:48 John Wick signed in.
+2023-03-12 19:06:56 /Users/liam/Downloads/ShipCase1.txt has been opened.
+2023-03-12 19:08:30 John Wick signed in.
+2023-03-12 19:08:35 /Users/liam/Downloads/ShipCase1.txt has been opened.
+2023-03-12 19:23:29 John Wick signed in.
+2023-03-12 19:23:35 /Users/liam/Downloads/ShipCase1.txt has been opened.
+2023-03-12 19:24:18 /Users/liam/Downloads/ShipCase1.txt has been opened.
+2023-03-12 19:26:11 John Wick signed in.
+2023-03-12 19:26:16 /Users/liam/Downloads/ShipCase1.txt has been opened.
+2023-03-12 19:26:38 /Users/liam/Downloads/ShipCase1.txt has been opened.
+2023-03-12 19:36:23 John Wick signed in.
+2023-03-12 19:36:43 /Users/liam/Downloads/ShipCase1.txt has been opened.
+2023-03-12 19:38:26 John Wick signed in.
+2023-03-12 19:38:33 /Users/liam/Downloads/ShipCase1.txt has been opened.
+2023-03-12 19:39:09 John Wick signed in.
+2023-03-12 19:39:15 /Users/liam/Downloads/ShipCase1.txt has been opened.
+2023-03-12 19:39:39 /Users/liam/Downloads/ShipCase1.txt has been opened.
+2023-03-12 19:45:58 John Wick signed in.
+2023-03-12 19:46:04 /Users/liam/Downloads/ShipCase1.txt has been opened.
+2023-03-12 19:46:32 /Users/liam/Downloads/ShipCase1.txt has been opened.
+2023-03-12 20:05:13 a signed in.
+2023-03-12 20:06:00 /Users/jerrywang/Documents/cs179/TeamToaster/frontend/ship_case_1.txt has been opened.
+2023-03-12 20:07:29 a signed in.
+2023-03-12 20:07:37 /Users/jerrywang/Documents/cs179/TeamToaster/frontend/ship_case_1.txt has been opened.
+2023-03-12 20:08:24 a signed in.
+2023-03-12 20:08:30 /Users/jerrywang/Documents/cs179/TeamToaster/frontend/ship_case_1.txt has been opened.
+2023-03-12 20:09:20 a signed in.
+2023-03-12 20:09:26 /Users/jerrywang/Documents/cs179/TeamToaster/frontend/ship_case_1.txt has been opened.
+2023-03-12 20:11:36 awer signed in.
+2023-03-12 20:11:43 /Users/jerrywang/Documents/cs179/TeamToaster/frontend/ship_case_1.txt has been opened.
+2023-03-12 20:13:55 a signed in.
+2023-03-12 20:14:03 /Users/jerrywang/Documents/cs179/TeamToaster/frontend/ship_case_1.txt has been opened.
+2023-03-12 20:16:35 a signed in.
+2023-03-12 20:16:41 /Users/jerrywang/Documents/cs179/TeamToaster/frontend/ship_case_1.txt has been opened.
+2023-03-12 20:18:26 a signed in.
+2023-03-12 20:18:33 /Users/jerrywang/Documents/cs179/TeamToaster/frontend/ship_case_1.txt has been opened.
+2023-03-12 20:20:07 a signed in.
+2023-03-12 20:20:13 /Users/jerrywang/Documents/cs179/TeamToaster/frontend/ship_case_1.txt has been opened.
+2023-03-12 20:20:59 a signed in.
+2023-03-12 20:21:05 /Users/jerrywang/Documents/cs179/TeamToaster/frontend/ship_case_1.txt has been opened.
+2023-03-12 20:22:46 a signed in.
+2023-03-12 20:22:53 /Users/jerrywang/Documents/cs179/TeamToaster/frontend/ship_case_1.txt has been opened.
+2023-03-12 20:25:03 a signed in.
+2023-03-12 20:25:08 /Users/jerrywang/Documents/cs179/TeamToaster/frontend/ship_case_1.txt has been opened.
+2023-03-12 20:27:25 a signed in.
+2023-03-12 20:27:31 /Users/jerrywang/Documents/cs179/TeamToaster/frontend/ship_case_1.txt has been opened.
+2023-03-12 20:28:06 /Users/jerrywang/Documents/cs179/TeamToaster/frontend/ship_case_1.txt has been opened.
+2023-03-12 20:30:58 s signed in.
+2023-03-12 20:31:13 /Users/jerrywang/Documents/cs179/TeamToaster/frontend/ship_case_1.txt has been opened.
+2023-03-12 20:31:47 /Users/jerrywang/Documents/cs179/TeamToaster/frontend/ship_case_1.txt has been opened.

@@ -5,6 +5,7 @@ import globals
 from app import *
 from datetime import datetime
 import re
+from operation import Operation
 
 #from frontend.app import Node, search
 
@@ -13,6 +14,19 @@ class ComputingPage(tk.Frame):
         tk.Frame.__init__(self, parent)
         #load_prompt = Label(self, text = "Computing...")
         #load_prompt.place(relx=.5, rely=.1, anchor= CENTER)
+
+        ship_name = Label(self)
+        ship_name.place(relx =.05, rely =.1, anchor = NW)
+
+        def ship_name_click():
+            if globals.string_filename == "":
+                print("EMPTY")
+            else:
+                print(globals.string_filename)
+            ship_name.config(text=globals.string_filename)
+
+        ship_name_button = Button(self, text = "SHOW CURRENT SHIP NAME", command=lambda: ship_name_click())
+        ship_name_button.place(relx =.05, rely =.05, anchor = NW)
 
         comment_box = Entry(self, width = 50)
         comment_box.place(relx=.1, rely =.95, anchor=W)
@@ -45,42 +59,75 @@ class ComputingPage(tk.Frame):
                 buffer_init[(r + 1, c + 1)] = [0, 'UNUSED']
 
         
+        compute_time_label = Label(self, text = "")
+        compute_time_label.place(relx=.5, rely=.1, anchor=CENTER)
+        
+        moves_time = Label(self, text ="")
+        moves_time.place(relx = .5, rely = 0.9, anchor=CENTER)
+
+        moves_listbox = Listbox(self)
+        moves_listbox.place(relx = .5, rely =.3, anchor=CENTER)
+
+        
         def compute():
             step_y = 0.2
             print(globals.op)
 
             if globals.op == 'transfer':
-                root = Node(globals.ship, buffer_init, globals.unload_list, 'transfer')
-                initial_time = time.time()
-                goal = search(root)
-                unload_buffer_node = unload_buffer(goal)
-                load_ship_node = load_ship(unload_buffer_node, globals.load_list)
-                #print(load_ship_node.state)
-                compute_time = (time.time() - initial_time) * 1000
-                compute_time_label = Label(self, text = "Total Time Computing = " + str(compute_time) + "ms")
-                compute_time_label.place(relx=.5, rely=.1, anchor=CENTER)
-                for i in order_of_operations(load_ship_node):
-                    step = Label(self, text=i)
-                    step.place(relx = .5, rely = step_y, anchor=CENTER)
-                    step_y += 0.05
-                    #print(i)
-                moves_time = Label(self, text = "Estimated Time to Perform Moves = " + str(load_ship_node.g) +"min")
-                moves_time.place(relx = .5, rely = step_y, anchor=CENTER)
+                if len(globals.load_list) != 0:
+                    root = Node(globals.ship, buffer_init, globals.unload_list, 'transfer')
+                    initial_time = time.time()
+                    goal = search(root)
+                    unload_buffer_node = unload_buffer(goal)
+                    load_ship_node = load_ship(unload_buffer_node, globals.load_list)
+                    #print(load_ship_node.state)
+                    compute_time = (time.time() - initial_time) * 1000
+                    compute_time_label.config(text = "Total Time Computing = " + str(compute_time) + "ms")
+                    #compute_time_label.place(relx=.5, rely=.1, anchor=CENTER)
+                    for i in order_of_operations(load_ship_node):
+                        moves_listbox.insert(END, i + "\n")
+                        #step = Label(self, text=i)
+                        #step.place(relx = .5, rely = step_y, anchor=CENTER)
+                        #step_y += 0.05
+                        #print(i)
+                    moves_time.config(text = "Estimated Time to Perform Moves = " + str(load_ship_node.g) +"min")
+                    #moves_time.place(relx = .5, rely = 0.9, anchor=CENTER)
+                    globals.operations_list = order_of_operations(load_ship_node)
+                else:
+                    initial_time = time.time()
+                    root = Node(globals.ship, buffer_init, globals.unload_list, 'transfer')
+                    load_ship_node = load_ship(root, globals.load_list)
+                    compute_time = (time.time() - initial_time) * 1000
+                    compute_time.config(text = "Total Time Computing = " + str(compute_time) + "ms")
+                    #compute_time_label.place(relx=.5, rely=.1, anchor=CENTER)
+                    for i in order_of_operations(load_ship_node):
+                        moves_listbox.insert(END, i + "\n")
+                        #step = Label(self, text=i)
+                        #step.place(relx = .5, rely = step_y, anchor=CENTER)
+                        #step_y += 0.05
+                        #print(i)
+                    moves_time.config(text = "Estimated Time to Perform Moves = " + str(load_ship_node.g) +"min")
+                    #moves_time.place(relx = .5, rely = step_y, anchor=CENTER)
+                    globals.operations_list = order_of_operations(load_ship_node)
             elif globals.op == 'balance':
                 root = Node(globals.ship, buffer_init, globals.unload_list, 'balance')
                 initial_time = time.time()
                 goal = search(root)
                 unload_buffer_node = unload_buffer(goal)
                 compute_time = (time.time() - initial_time) * 1000
-                compute_time_label = Label(self, text = "Total Time Computing = " + str(compute_time) + "ms")
-                compute_time_label.place(relx=.5, rely=.1, anchor=CENTER)
+                compute_time_label.config(text = "Total Time Computing = " + str(compute_time) + "ms")
+                #compute_time_label.place(relx=.5, rely=.1, anchor=CENTER)
                 for i in order_of_operations(unload_buffer_node):
-                    step = Label(self, text=i)
-                    step.place(relx = .5, rely = step_y, anchor=CENTER)
-                    step_y += 0.05
+                    moves_listbox.insert(END, i + "\n")
+                    #step = Label(self, text=i)
+                    #step.place(relx = .5, rely = step_y, anchor=CENTER)
+                    #step_y += 0.05
                     #print(i)
-                moves_time = Label(self, text = "Estimated Time to Perform Moves = " + str(unload_buffer_node.g) +"min")
-                moves_time.place(relx = .5, rely = step_y, anchor=CENTER)
+                moves_time.config(text = "Estimated Time to Perform Moves = " + str(unload_buffer_node.g) +"min")
+                #moves_time.place(relx = .5, rely = step_y, anchor=CENTER)
+                globals.operations_list = order_of_operations(unload_buffer_node)
+            
+        
 
 
 
@@ -138,3 +185,10 @@ class ComputingPage(tk.Frame):
 
         sign_in_button = Button(self, text = "Sign In", command= lambda: sign_in_popup())
         sign_in_button.place(relx=.8, rely=.05, anchor="e")
+
+        def on_done_press():
+            moves_listbox.delete(0, END)
+            controller.show_frame(Operation)
+
+        done_button = Button(self, text="DONE", command=lambda: on_done_press())
+        done_button.place(rely=.95, relx=.9, anchor=SE)

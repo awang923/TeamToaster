@@ -137,8 +137,11 @@ class Node:
         # f = (ROWS * COLS) // 2 if f > (ROWS * COLS) // 2 else f
         # self.h = (f * total_cost) / ROWS
 
-        self.h = total_cost * (len(self.unloads) / len(globals.unload_list))
-
+        
+        if len(globals.unload_list) != 0:
+            self.h = total_cost * (len(self.unloads) / len(globals.unload_list))
+        else:
+            self.h = 0
         # self.h = total_cost
 
     # when balancing, goal is to maximize mass ratio / g score
