@@ -139,6 +139,7 @@ class InputLoadPage(tk.Frame):
             for x in globals.load_list:
                 print(x)
             print(globals.string_filename + "string_filename load_page")
+            load_list_box.delete(0, END)
             controller.show_frame(InputUnloadPage)
 
         done_button = Button(self, text="DONE", command=lambda: on_done_pressed())

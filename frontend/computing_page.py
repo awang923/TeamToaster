@@ -74,7 +74,8 @@ class ComputingPage(tk.Frame):
             print(globals.op)
 
             if globals.op == 'transfer':
-                if len(globals.load_list) != 0:
+                if len(globals.unload_list) != 0:
+                    print("UNLOADING ONLY")
                     root = Node(globals.ship, buffer_init, globals.unload_list, 'transfer')
                     initial_time = time.time()
                     goal = search(root)
@@ -98,7 +99,7 @@ class ComputingPage(tk.Frame):
                     root = Node(globals.ship, buffer_init, globals.unload_list, 'transfer')
                     load_ship_node = load_ship(root, globals.load_list)
                     compute_time = (time.time() - initial_time) * 1000
-                    compute_time.config(text = "Total Time Computing = " + str(compute_time) + "ms")
+                    compute_time_label.config(text = "Total Time Computing = " + str(compute_time) + "ms")
                     #compute_time_label.place(relx=.5, rely=.1, anchor=CENTER)
                     for i in order_of_operations(load_ship_node):
                         moves_listbox.insert(END, i + "\n")
@@ -188,6 +189,9 @@ class ComputingPage(tk.Frame):
 
         def on_done_press():
             moves_listbox.delete(0, END)
+            compute_time_label.config(text="")
+            moves_time.config(text="")
+            print(globals.operations_list)
             controller.show_frame(Operation)
 
         done_button = Button(self, text="DONE", command=lambda: on_done_press())
