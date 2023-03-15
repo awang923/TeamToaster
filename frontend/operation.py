@@ -244,7 +244,7 @@ class Operation(tk.Frame):
 
             # set x, y, container list and container name for the first animation
             parse_order = parse_string(globals.operations_list[self.order_index])
-
+            print(parse_order)
             def set_variables(parse_order):
                 if parse_order[0] != None:
                     if parse_order[0][0] == 'SHIP':
@@ -266,11 +266,17 @@ class Operation(tk.Frame):
                     on_view_click.prev_x = (len(prev)-1) - (parse_order[0][1][0]-1)
                     on_view_click.prev_y = parse_order[0][1][1] - 1
                     on_view_click.container_name = prev[on_view_click.prev_x][on_view_click.prev_y].cget('text')
+                else:
+                    on_view_click.prev_x = 0
+                    on_view_click.prev_y = 0
+                    on_view_click.container_name = parse_order[1][2]
+
                 if dest != None:
                     on_view_click.dest_x = (len(dest)-1) - (parse_order[1][1][0]-1)
                     on_view_click.dest_y = parse_order[1][1][1] - 1
-                if prev == None and dest != None:
-                    on_view_click.container_name = parse_order[1][2]
+                else:
+                    on_view_click.dest_x = 0
+                    on_view_click.dest_y = 0
                 
                 return prev, dest
             on_view_click.prev, on_view_click.dest = set_variables(parse_order)

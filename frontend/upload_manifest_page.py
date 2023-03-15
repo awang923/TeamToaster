@@ -92,7 +92,7 @@ class UploadManifestPage(tk.Frame):
             logfile.close()
             print(globals.string_filename + "string_filename upload_manifest_page")
             parse_manifest(globals.ship, globals.string_filename)
-            print(globals.ship)
+            # print(globals.ship)
             filename_label.config(text = "")
             controller.show_frame(SelectOperationPage)
 
