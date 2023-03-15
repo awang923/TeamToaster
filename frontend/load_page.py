@@ -73,7 +73,6 @@ class InputLoadPage(tk.Frame):
         confirm_enter.place(relx = .5, rely=.5, anchor=CENTER)
 
 
-
         load_list_box = Listbox(self)
         load_list_box.place(relx=.25, rely=.5, anchor=CENTER)
 
@@ -140,6 +139,8 @@ class InputLoadPage(tk.Frame):
                 print(x)
             print(globals.string_filename + "string_filename load_page")
             load_list_box.delete(0, END)
+            confirm_enter.config(text="")
+            error_message.config(text="")
             controller.show_frame(InputUnloadPage)
 
         done_button = Button(self, text="DONE", command=lambda: on_done_pressed())

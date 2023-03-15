@@ -207,3 +207,18 @@
 2023-03-13 19:52:14 /Users/liam/Downloads/ShipCase1.txt has been opened.
 2023-03-13 20:18:09 John Wick signed in.
 2023-03-13 20:18:15 /Users/liam/Downloads/ShipCase1.txt has been opened.
+2023-03-15 00:01:12 a signed in.
+2023-03-15 00:01:22 /Users/jerrywang/Documents/cs179/TeamToaster/frontend/ship_case_1.txt has been opened.
+2023-03-15 00:10:17 a signed in.
+2023-03-15 00:10:24 /Users/jerrywang/Documents/cs179/TeamToaster/frontend/ship_case_1.txt has been opened.
+2023-03-15 00:17:43 a signed in.
+2023-03-15 00:17:49 /Users/jerrywang/Documents/cs179/TeamToaster/frontend/ship_case_1.txt has been opened.
+2023-03-15 00:20:58 a signed in.
+2023-03-15 00:21:04 /Users/jerrywang/Documents/cs179/TeamToaster/frontend/ship_case_1.txt has been opened.
+2023-03-15 00:24:12 q signed in.
+2023-03-15 00:24:25 /Users/jerrywang/Documents/cs179/TeamToaster/frontend/ship_case_1.txt has been opened.
+2023-03-15 00:25:06 /Users/jerrywang/Documents/cs179/TeamToaster/frontend/ship_case_1.txt has been opened.
+2023-03-15 00:25:48 /Users/jerrywang/Documents/cs179/TeamToaster/frontend/ship_case_1.txt has been opened.
+2023-03-15 01:06:38 a signed in.
+2023-03-15 01:06:45 /Users/jerrywang/Documents/cs179/TeamToaster/frontend/ship_case_1.txt has been opened.
+2023-03-15 01:07:24 /Users/jerrywang/Documents/cs179/TeamToaster/frontend/ship_case_1.txt has been opened.

@@ -188,6 +188,7 @@ class InputUnloadPage(tk.Frame):
             for x in globals.unload_list:
                 print(x)
             controller.show_frame(ComputingPage)
+            confirm_unload.config(text="")
 
         
         done_button = Button(self, text="DONE", command=lambda: done_button_click())
