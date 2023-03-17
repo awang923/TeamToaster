@@ -7,6 +7,7 @@ from select_op_page import SelectOperationPage
 from app import *
 import globals
 from datetime import datetime
+import re
 
 globals.init()
 
@@ -17,6 +18,7 @@ class UploadManifestPage(tk.Frame):
         upload_prompt.place(relx=.5, rely=.1, anchor= CENTER)
 
         globals.init()
+
 
         comment_box = Entry(self, width = 50)
         comment_box.place(relx=.1, rely =.95, anchor=W)
@@ -80,15 +82,24 @@ class UploadManifestPage(tk.Frame):
             filename = filedialog.askopenfilename(title = "Select File", filetypes=(("txt file", "*.txt"),))
             filename_label.config(text = filename)
             #filename_label.place(relx=.5, rely=.3, anchor= CENTER)
+
             
            
 
         def on_done_pressed():
             #print(filename)
+            container_count = 0
             globals.string_filename = str(filename)
+            file = open(globals.string_filename, 'r')
+            lines = file.readlines()
+            regex = ".(\d\d),(\d\d).,\s{(\d*)}.\s([a-zA-Z]*)"
+            for line in lines:
+                result = re.search(regex, str(line))
+                if result.group(4) != "UNUSED" and result.group(4) != "NAN":
+                    container_count += 1
             current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             with open("frontend/logfile.txt", 'a') as logfile:
-                logfile.write(current_time + " " + globals.string_filename + " has been opened." + "\n")
+                logfile.write(current_time + " " + globals.string_filename + " has been opened, there are " + str(container_count) + " containers on the ship. \n")
             logfile.close()
             print(globals.string_filename + "string_filename upload_manifest_page")
             parse_manifest(globals.ship, globals.string_filename)

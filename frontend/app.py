@@ -1,6 +1,8 @@
 import copy
 import time
 import globals
+import os.path
+
 
 
 # dimensions of ship bay
@@ -549,7 +551,9 @@ def update_manifest(ship_grid, filename):
 
     line_counter = 1
 
-    with open('files/' + name + 'OUTBOUND.txt', 'w') as outbound:
+    path_to_desktop = os.path.join(os.path.join(os.path.expanduser('~')), 'Desktop')
+
+    with open(path_to_desktop + '/' + name + 'OUTBOUND.txt', 'w') as outbound:
         for key, value in ship_grid.items():
             # format positional data
             x = str(key[0]) if len(str(key[0])) > 1 else '0' + str(key[0])

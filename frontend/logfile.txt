@@ -234,3 +234,51 @@
 2023-03-16 17:49:27 /Users/jerrywang/Documents/cs179/TeamToaster/frontend/ship_case_1.txt has been opened.
 2023-03-16 17:51:03 a signed in.
 2023-03-16 17:51:09 /Users/jerrywang/Documents/cs179/TeamToaster/frontend/ship_case_1.txt has been opened.
+2023-03-16 19:47:37 j j signed in.
+2023-03-16 19:47:45 /Users/liam/Downloads/empty_manifest.txt has been opened.
+2023-03-16 19:53:24 j j signed in.
+2023-03-16 19:53:34 /Users/liam/Downloads/empty_manifest.txt has been opened.
+2023-03-16 20:09:41 j j signed in.
+2023-03-16 20:09:57 /Users/liam/Downloads/ShipCase1.txt has been opened.
+2023-03-16 20:13:22 j j signed in.
+2023-03-16 20:13:28 /Users/liam/Downloads/ShipCase1.txt has been opened.
+2023-03-16 20:14:29 j j signed in.
+2023-03-16 20:14:36 /Users/liam/Downloads/empty_manifest.txt has been opened.
+2023-03-16 20:14:53 /Users/liam/Downloads/ShipCase1.txt has been opened.
+2023-03-16 20:15:17 /Users/liam/Downloads/ShipCase1.txt has been opened.
+2023-03-16 20:17:35 j j signed in.
+2023-03-16 20:17:41 /Users/liam/Downloads/ShipCase1.txt has been opened.
+2023-03-16 20:18:28 j j signed in.
+2023-03-16 20:18:35 /Users/liam/Downloads/ShipCase1.txt has been opened.
+2023-03-16 20:18:51 /Users/liam/Downloads/ShipCase1.txt has been opened.
+2023-03-16 20:19:08 Cat has been offloaded.2023-03-16 20:19:08 Phones has been onloaded.2023-03-16 20:40:04 John Wick signed in.
+2023-03-16 20:41:22 John Wick signed in.
+2023-03-16 20:42:07 john wick signed in.
+2023-03-16 20:46:32 John Wick signed in.
+2023-03-16 20:47:50 John Wick signed in.
+2023-03-16 20:47:59 /Users/liam/Downloads/ShipCase1.txt has been opened, there are 0 containers on the ship. 
+2023-03-16 20:49:34 John Wick signed in.
+2023-03-16 20:53:03 John Wick signed in.
+2023-03-16 20:53:12 /Users/liam/Downloads/ShipCase1.txt has been opened, there are 96 containers on the ship. 
+2023-03-16 20:54:01 John Wick signed in.
+2023-03-16 20:54:07 /Users/liam/Downloads/ShipCase1.txt has been opened, there are 96 containers on the ship. 
+2023-03-16 20:55:01 John Wick signed in.
+2023-03-16 20:55:09 /Users/liam/Downloads/ShipCase1.txt has been opened, there are 2 containers on the ship. 
+2023-03-16 20:55:37 Cat has been offloaded.
+2023-03-16 20:55:37 Phones has been onloaded.
+2023-03-16 20:55:39 Finished a cycle. Manifest ShipCase1OUTBOUND.txt was written to desktop, and a reminder pop-up to operator to send file was displayed.
+2023-03-16 20:58:29 j j signed in.
+2023-03-16 20:58:36 /Users/liam/Downloads/ShipCase1.txt has been opened, there are 2 containers on the ship. 
+2023-03-16 20:58:55 Cat has been offloaded.
+2023-03-16 20:59:08 Finished a cycle. Manifest ShipCase1OUTBOUND.txt was written to desktop, and a reminder pop-up to operator to send file was displayed.
+2023-03-16 21:00:17 j j signed in.
+2023-03-16 21:00:24 /Users/liam/Downloads/ShipCase1.txt has been opened, there are 2 containers on the ship. 
+2023-03-16 21:00:45 Cat has been offloaded.
+2023-03-16 21:01:00 Finished a cycle. Manifest ShipCase1OUTBOUND.txt was written to desktop, and a reminder pop-up to operator to send file was displayed.
+2023-03-16 21:02:35 j j signed in.
+2023-03-16 21:02:41 /Users/liam/Downloads/ShipCase1.txt has been opened, there are 2 containers on the ship. 
+2023-03-16 21:03:11 Dog has been offloaded.
+2023-03-16 21:03:12 Cat has been offloaded.
+2023-03-16 21:03:13 Phones has been onloaded.
+2023-03-16 21:03:15 Drugs has been onloaded.
+2023-03-16 21:03:16 Finished a cycle. Manifest ShipCase1OUTBOUND.txt was written to desktop, and a reminder pop-up to operator to send file was displayed.

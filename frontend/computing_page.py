@@ -68,7 +68,14 @@ class ComputingPage(tk.Frame):
         moves_listbox = Listbox(self)
         moves_listbox.place(relx = .5, rely =.3, anchor=CENTER)
 
+        done_button = Button(self, text="DONE")
+        done_button.place(rely=.95, relx=.9, anchor=SE)
+
+        already_done = Label(self, text = "")
+        already_done.place(relx = .5, rely =.5, anchor=CENTER)
+
         def on_done_press():
+            print("TEST")
             moves_listbox.delete(0, END)
             compute_time_label.config(text="")
             moves_time.config(text="")
@@ -79,7 +86,7 @@ class ComputingPage(tk.Frame):
                 popup = Toplevel(self)
                 popup.geometry("750x250")
                 popup_label = Label(
-                    popup, text="Operation done.\n Remember to mail the updated Manifest.")
+                    popup, text="Operation done.\n Outbound manifest written to desktop. \n to mail the updated Manifest.")
                 popup_label.place(relx=.5, rely=.4, anchor=CENTER)
                 confirm_button = Button(
                     popup, text="Confirm", command=lambda: on_confirm_click(popup))
@@ -124,6 +131,7 @@ class ComputingPage(tk.Frame):
                     moves_time.config(text = "Estimated Time to Perform Moves = " + str(load_ship_node.g) +"min")
                     #moves_time.place(relx = .5, rely = 0.9, anchor=CENTER)
                     globals.operations_list = order_of_operations(load_ship_node)
+                    done_button.config(command=lambda: on_done_press())
                 else:
                     initial_time = time.time()
                     root = Node(globals.ship, buffer_init, globals.unload_list, 'transfer')
@@ -140,6 +148,7 @@ class ComputingPage(tk.Frame):
                     moves_time.config(text = "Estimated Time to Perform Moves = " + str(load_ship_node.g) +"min")
                     #moves_time.place(relx = .5, rely = step_y, anchor=CENTER)
                     globals.operations_list = order_of_operations(load_ship_node)
+                    done_button.config(command=lambda: on_done_press())
             elif globals.op == 'balance':
                 root = Node(globals.ship, buffer_init, globals.unload_list, 'balance')
                 initial_time = time.time()
@@ -158,13 +167,12 @@ class ComputingPage(tk.Frame):
                     moves_time.config(text = "Estimated Time to Perform Moves = " + str(unload_buffer_node.g) +"min")
                     #moves_time.place(relx = .5, rely = step_y, anchor=CENTER)
                     globals.operations_list = order_of_operations(unload_buffer_node)
-                    done_button = Button(self, text="DONE", command=lambda: on_done_press())
-                    done_button.place(rely=.95, relx=.9, anchor=SE)
+                    done_button.config(command=lambda: on_done_press())
                 else:
-                    already_done = Label(self, text = "ALREADY BALANCED, NO MOVES TO BE MADE")
-                    already_done.place(relx = .5, rely =.5, anchor=CENTER)
-                    done_button = Button(self, text="DONE", command=lambda: open_reminder())
-                    done_button.place(rely=.95, relx=.9, anchor=SE)
+                    already_done.config(text="ALREADY BALANCED, NO MOVES TO BE MADE")
+                    done_button.config(command=lambda: open_reminder())
+                    update_manifest(globals.ship, globals.string_filename)
+                    
 
             
         

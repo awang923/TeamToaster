@@ -1,3 +1,4 @@
+#from subprocess import _TXT
 import tkinter as tk
 from tkinter import *
 import re
@@ -303,12 +304,26 @@ class Operation(tk.Frame):
                 return temp
 
             def on_next_press():
+                if not on_view_click.prev:
+                        current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                        with open("frontend/logfile.txt", 'a') as logfile:
+                            logfile.write(current_time + " " + on_view_click.container_name + " has been onloaded." + "\n")
+                        logfile.close()
+
+                #print(on_view_click.dest)
+                if not on_view_click.dest:
+                    current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                    with open("frontend/logfile.txt", 'a') as logfile:
+                        logfile.write(current_time + " " + on_view_click.container_name + " has been offloaded." + "\n")
+                    logfile.close()
+
                 if on_view_click.order_left > 1:
                     # update animation with new x and y
                     set_end_of_animation()
                     parse_order = parse_string(globals.operations_list[self.order_index])
                     on_view_click.prev, on_view_click.dest = set_variables(parse_order)
                     animation()
+                
 
                     # display label with the next order sequence
                     order_label['fg'] = 'black'
@@ -334,10 +349,14 @@ class Operation(tk.Frame):
 
             def open_reminder():
                 update_manifest(globals.ship, globals.string_filename)
+                name = [i for i in globals.string_filename.split('/') if '.txt' in i][0][:-4]
+                current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                with open("frontend/logfile.txt", 'a') as logfile:
+                    logfile.write(current_time + " " + "Finished a cycle. Manifest " + name + "OUTBOUND.txt was written to desktop, and a reminder pop-up to operator to send file was displayed." + "\n")
+                logfile.close()
                 popup = Toplevel(self)
                 popup.geometry("750x250")
-                popup_label = Label(
-                    popup, text="Operation done.\n Remember to mail the updated Manifest.")
+                popup_label = Label(popup,  text="Operation done.\n" + name + "OUTBOUND.txt written to desktop. \n Remember to mail the updated Manifest.")
                 popup_label.place(relx=.5, rely=.4, anchor=CENTER)
                 confirm_button = Button(
                     popup, text="Confirm", command=lambda: on_confirm_click(popup))
