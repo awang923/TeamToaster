@@ -6,7 +6,7 @@ from app import *
 from datetime import datetime
 import re
 from operation import Operation
-
+import upload_manifest_page
 #from frontend.app import Node, search
 
 class ComputingPage(tk.Frame):
@@ -68,7 +68,36 @@ class ComputingPage(tk.Frame):
         moves_listbox = Listbox(self)
         moves_listbox.place(relx = .5, rely =.3, anchor=CENTER)
 
-        
+        def on_done_press():
+            moves_listbox.delete(0, END)
+            compute_time_label.config(text="")
+            moves_time.config(text="")
+            print(globals.operations_list)
+            controller.show_frame(Operation)
+
+        def open_reminder():
+                popup = Toplevel(self)
+                popup.geometry("750x250")
+                popup_label = Label(
+                    popup, text="Operation done.\n Remember to mail the updated Manifest.")
+                popup_label.place(relx=.5, rely=.4, anchor=CENTER)
+                confirm_button = Button(
+                    popup, text="Confirm", command=lambda: on_confirm_click(popup))
+                confirm_button.place(relx=.5, rely=.6, anchor=CENTER)
+
+        def on_confirm_click(top):
+            top.destroy()
+            top.update()
+            globals.init()
+            # for widget in ship_frame.winfo_children():
+            #     widget.destroy()
+            #self.order_index = 0
+            #self.order_label_y = 0.1
+            #self.prev_label = None
+            #for widget in animation_frame.winfo_children():
+                #widget.destroy()
+            controller.show_frame(upload_manifest_page.UploadManifestPage)
+
         def compute():
             step_y = 0.2
             print(globals.op)
@@ -81,6 +110,7 @@ class ComputingPage(tk.Frame):
                     goal = search(root)
                     unload_buffer_node = unload_buffer(goal)
                     load_ship_node = load_ship(unload_buffer_node, globals.load_list)
+                    update_manifest(load_ship_node.state, globals.string_filename)
                     #print(load_ship_node.state)
                     compute_time = (time.time() - initial_time) * 1000
                     compute_time_label.config(text = "Total Time Computing = " + str(compute_time) + "ms")
@@ -110,25 +140,34 @@ class ComputingPage(tk.Frame):
                     moves_time.config(text = "Estimated Time to Perform Moves = " + str(load_ship_node.g) +"min")
                     #moves_time.place(relx = .5, rely = step_y, anchor=CENTER)
                     globals.operations_list = order_of_operations(load_ship_node)
-                globals.ship = load_ship_node.state
             elif globals.op == 'balance':
                 root = Node(globals.ship, buffer_init, globals.unload_list, 'balance')
                 initial_time = time.time()
                 goal = search(root)
-                unload_buffer_node = unload_buffer(goal)
-                compute_time = (time.time() - initial_time) * 1000
-                compute_time_label.config(text = "Total Time Computing = " + str(compute_time) + "ms")
-                #compute_time_label.place(relx=.5, rely=.1, anchor=CENTER)
-                for i in order_of_operations(unload_buffer_node):
-                    moves_listbox.insert(END, i + "\n")
-                    #step = Label(self, text=i)
-                    #step.place(relx = .5, rely = step_y, anchor=CENTER)
-                    #step_y += 0.05
-                    #print(i)
-                moves_time.config(text = "Estimated Time to Perform Moves = " + str(unload_buffer_node.g) +"min")
-                #moves_time.place(relx = .5, rely = step_y, anchor=CENTER)
-                globals.operations_list = order_of_operations(unload_buffer_node)
-                globals.ship = unload_buffer_node.state        
+                if goal:
+                    unload_buffer_node = unload_buffer(goal)
+                    compute_time = (time.time() - initial_time) * 1000
+                    compute_time_label.config(text = "Total Time Computing = " + str(compute_time) + "ms")
+                    #compute_time_label.place(relx=.5, rely=.1, anchor=CENTER)
+                    for i in order_of_operations(unload_buffer_node):
+                        moves_listbox.insert(END, i + "\n")
+                        #step = Label(self, text=i)
+                        #step.place(relx = .5, rely = step_y, anchor=CENTER)
+                        #step_y += 0.05
+                        #print(i)
+                    moves_time.config(text = "Estimated Time to Perform Moves = " + str(unload_buffer_node.g) +"min")
+                    #moves_time.place(relx = .5, rely = step_y, anchor=CENTER)
+                    globals.operations_list = order_of_operations(unload_buffer_node)
+                    done_button = Button(self, text="DONE", command=lambda: on_done_press())
+                    done_button.place(rely=.95, relx=.9, anchor=SE)
+                else:
+                    already_done = Label(self, text = "ALREADY BALANCED, NO MOVES TO BE MADE")
+                    already_done.place(relx = .5, rely =.5, anchor=CENTER)
+                    done_button = Button(self, text="DONE", command=lambda: open_reminder())
+                    done_button.place(rely=.95, relx=.9, anchor=SE)
+
+            
+        
 
 
 
@@ -186,13 +225,3 @@ class ComputingPage(tk.Frame):
 
         sign_in_button = Button(self, text = "Sign In", command= lambda: sign_in_popup())
         sign_in_button.place(relx=.8, rely=.05, anchor="e")
-
-        def on_done_press():
-            moves_listbox.delete(0, END)
-            compute_time_label.config(text="")
-            moves_time.config(text="")
-            print(globals.operations_list)
-            controller.show_frame(Operation)
-
-        done_button = Button(self, text="DONE", command=lambda: on_done_press())
-        done_button.place(rely=.95, relx=.9, anchor=SE)
