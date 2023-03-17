@@ -222,3 +222,15 @@
 2023-03-15 01:06:38 a signed in.
 2023-03-15 01:06:45 /Users/jerrywang/Documents/cs179/TeamToaster/frontend/ship_case_1.txt has been opened.
 2023-03-15 01:07:24 /Users/jerrywang/Documents/cs179/TeamToaster/frontend/ship_case_1.txt has been opened.
+2023-03-16 17:33:10 a signed in.
+2023-03-16 17:33:19 /Users/jerrywang/Documents/cs179/TeamToaster/frontend/ship_case_1.txt has been opened.
+2023-03-16 17:41:17 a signed in.
+2023-03-16 17:41:25 /Users/jerrywang/Documents/cs179/TeamToaster/frontend/ship_case_1.txt has been opened.
+2023-03-16 17:47:01 a signed in.
+2023-03-16 17:47:06 /Users/jerrywang/Documents/cs179/TeamToaster/frontend/ship_case_1.txt has been opened.
+2023-03-16 17:48:27 a signed in.
+2023-03-16 17:48:33 /Users/jerrywang/Documents/cs179/TeamToaster/frontend/ship_case_1.txt has been opened.
+2023-03-16 17:49:22 a signed in.
+2023-03-16 17:49:27 /Users/jerrywang/Documents/cs179/TeamToaster/frontend/ship_case_1.txt has been opened.
+2023-03-16 17:51:03 a signed in.
+2023-03-16 17:51:09 /Users/jerrywang/Documents/cs179/TeamToaster/frontend/ship_case_1.txt has been opened.

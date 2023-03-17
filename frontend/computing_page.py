@@ -110,6 +110,7 @@ class ComputingPage(tk.Frame):
                     moves_time.config(text = "Estimated Time to Perform Moves = " + str(load_ship_node.g) +"min")
                     #moves_time.place(relx = .5, rely = step_y, anchor=CENTER)
                     globals.operations_list = order_of_operations(load_ship_node)
+                globals.ship = load_ship_node.state
             elif globals.op == 'balance':
                 root = Node(globals.ship, buffer_init, globals.unload_list, 'balance')
                 initial_time = time.time()
@@ -127,8 +128,7 @@ class ComputingPage(tk.Frame):
                 moves_time.config(text = "Estimated Time to Perform Moves = " + str(unload_buffer_node.g) +"min")
                 #moves_time.place(relx = .5, rely = step_y, anchor=CENTER)
                 globals.operations_list = order_of_operations(unload_buffer_node)
-            
-        
+                globals.ship = unload_buffer_node.state        
 
 
 
