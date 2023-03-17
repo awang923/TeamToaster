@@ -549,7 +549,7 @@ def update_manifest(ship_grid, filename):
 
     line_counter = 1
 
-    with open(name + 'OUTBOUND.txt', 'w') as outbound:
+    with open('files/' + name + 'OUTBOUND.txt', 'w') as outbound:
         for key, value in ship_grid.items():
             # format positional data
             x = str(key[0]) if len(str(key[0])) > 1 else '0' + str(key[0])

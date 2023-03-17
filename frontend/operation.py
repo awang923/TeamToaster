@@ -333,6 +333,7 @@ class Operation(tk.Frame):
             done_button.place(rely=.95, relx=.9, anchor=SE)
 
             def open_reminder():
+                update_manifest(globals.ship, globals.string_filename)
                 popup = Toplevel(self)
                 popup.geometry("750x250")
                 popup_label = Label(
